@@ -1,0 +1,25 @@
+﻿@{
+    Layout = null;
+}
+
+<script>
+    function LoadArchiveDetails(id) {
+        try {
+            StartLoader();
+        
+            var Url = '@Url.Action("ArchiveDetails", "Archives_master")';
+            var DataReslt = $.get(Url, { id });
+            DataReslt.done(function (data) {
+                $("#DivmainArchive").empty();
+                $("#DivmainArchive").append(data);
+                EndLoader();
+            });
+
+
+        }
+        catch (ex) {
+            alert(ex);
+        }
+    }
+  
+</script>

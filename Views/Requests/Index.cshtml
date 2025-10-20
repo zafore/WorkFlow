@@ -1,0 +1,45 @@
+﻿
+
+<div class="container">
+    <div class="card">
+        <div class="card-header"></div>
+
+        <div class="card-body">
+            <div class="parsley-input col-md-12" id="fnWrapper">
+                <label> Select App </label>
+
+
+
+                <select class="form-control" id="Tools_Id" name="Tools_Id" required>
+
+
+              
+
+                </select>
+
+            </div>
+            </div>
+            </div>
+
+</div>
+
+<script src="~/js/jquery-3.6.0.min.js"></script>
+
+<script src="~/js/select2/select2.min.js"></script>
+<script>
+    $(document).ready(function () {
+        GetApplication();
+    });
+
+    function GetApplication() { 
+        try {
+            var url = "@Url.Action("GetApplication")";
+            $.getJSON(url, function (data) { 
+                console.log(data);
+            })
+        }
+        catch (e) { 
+            console.log(e);
+        }
+    }
+</script>

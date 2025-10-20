@@ -1,0 +1,64 @@
+﻿@{
+    Layout = null;
+}
+
+<script>
+
+    window.addEventListener("load", function (event) {
+        LoadInboxCount();
+        LoadNotification();
+    });
+
+
+    setInterval(function () {
+        LoadInboxCount();
+        LoadNotification();
+    }, 110000);
+
+    function LoadInboxCount()
+    {
+        var URL = "@Url.Action("InboxCount", "Requests")";
+        $.getJSON(URL,function(data)
+        {
+            document.getElementById("LblInbox").innerHTML = data.CountRequest;
+            document.getElementById("LblInbox2").innerHTML = data.CountRequest;
+            
+        }
+        
+        );
+
+    }
+    function LoadNotification()
+    {
+        var URL = "@Url.Action("GetNotification", "Home")";
+        $.get(URL,function(data)
+        {
+            $("#DivNotification").empty();
+            $("#DivNotification").append(data);
+            
+        }
+        
+        )
+       
+
+    }
+
+    function cache_clear() {
+        window.location.reload(true);
+        // window.location.reload(); use this if you do not remove cache
+    }
+    function reset()
+    {
+        document.getElementById("FormName").reset();
+    }
+    function StartLoader()
+    {
+        //id="loading" style="display: none;"
+        $('#Loader').show();
+
+    }
+    function EndLoader() {
+        $('#Loader').hide();
+
+    }
+</script>

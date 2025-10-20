@@ -1,0 +1,323 @@
+﻿@{
+    ViewBag.Title = "Edit";
+    Layout = null;
+}
+<script>
+
+
+    function GetAppReq(item) {
+
+        var baseUri =@Url.Action("GetLevelassign", "Applications");
+
+        var request = $.getJSON(baseUri + '/' + item);
+        request.done(function (data) {
+
+            var html = '<thead>' +
+
+                                    '<tr class="label-success">' +
+                                       ' <td>' + 'Employe Name</td>' +
+                                       ' <td>Manager Type</td>' +
+                                        '<td> Status </td>' +
+                                        '<td>...</td>' +
+                                    '</tr></thead>';
+
+
+            $.each(data, function (i, company) {
+                html +=
+     '<tr>' +
+       '<td>' + company.Emp_Name + '</td>' +
+           '<td>' + company.ManagerType + '</td>' +
+         '<td>' + company.InUse + '</td>' +
+          '<td>' + '<button    class="btn btn-info" onclick="GetChange_Emp_Ass(' + company.level_ID + ')" >change Satus</button>' + '</td>' +
+
+            '</tr>'
+            });
+
+
+
+
+            $('#TableLeveass').empty();
+            $('#TableLeveass').append(html);
+            $("#Application_Level_Id").val(item);
+            $("#myModal").modal();
+        }
+
+        );
+
+
+
+    }
+
+    function GetChange_Emp_Ass(item) {
+
+        var baseUri = "../Applications/ChangeEmpAss";
+        //
+        var request = $.getJSON(baseUri + '/' + item);
+        request.done(function (data) {
+
+            GetAppReq(data);
+
+
+        }
+
+        );
+
+
+
+    }
+
+    function GetDropDownTable() {
+        var e = document.getElementById("Tools_Id");
+        var ToolId = e.options[e.selectedIndex].value;
+        if (ToolId === "5" || ToolId === "7") {
+
+            $('#DivSTable :input').attr('disabled', false);
+
+        }
+        else {
+            $('#DivSTable :input').attr('disabled', true);
+
+        }
+        if (ToolId === "10")
+        {
+            GetDesplayLinkData();
+        }
+
+
+
+
+    }
+   
+    @*function GetDep() {
+        var html = ' <div class="form-group" id="SelectEmp"><label class="col-md-4 control-label">Select Department</label><div class="col-md-4 selectContainer"> <div class="input-group">' +
+                            '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>' +
+     '@Html.DropDownList("Department_Id", null, "--Select Department--",new { onchange = "GetEmpByDep();", @class = "form-control" } )' + '</div></div> </div>'
+        $("#DevDepartment").empty();
+        ("#DevDepartment").append(html);
+    }*@
+
+    function GetAssagendType() {
+        var e = document.getElementById("dropAssTo");
+        var IdType = e.selectedIndex;
+        if (IdType === 1) {
+            $('#SelectEmp :input').attr('disabled', false);
+            $('#DevManagerList').empty();
+            $('#Department_Id').attr('disabled', false);
+
+        }
+        if (IdType === 2) {
+            $('#SelectEmp :input').attr('disabled', true);
+            GetManagerTypes();
+            $('#DevEmpList').empty();
+
+            $('#Department_Id').attr('disabled', true);
+        }
+        if (IdType === 0) {
+            $('#SelectEmp :input').attr('disabled', true);
+            $('#DevEmpList').empty();
+            $('#DevManagerList').empty();
+            $('#Department_Id').attr('disabled', true);
+        }
+
+    }
+
+    
+
+
+    function GetManagerTypes() {
+
+        var Depdata = $.getJSON("../Applications/GetManagerType/");
+        var html = ' <select id="Assigned_To_Manager_Type_Id" name="Assigned_To_Manager_Type_Id" class="form-control">  <option value="0">--Select Emp--</option>';
+
+        Depdata.done(function (data) {
+
+
+
+
+            $.each(data, function (i, Depv) {
+                html +=
+                     '  <option value=" ' + Depv.Manager_Type_Id + '"> ' + Depv.Manager_Type_Eng + '  </option>'
+            });
+
+            html += '</select>';
+
+
+            $('#DevManagerList').empty();
+            $('#DevManagerList').append(html);
+        }
+
+    );
+
+
+
+    }
+
+    function AddDropData(item) {
+        var id = item;
+        $("#Application_Requirement_Id").val(item);
+        var ReqDetails = $.getJSON("../Applications/levelRequirement/" + item);
+
+        ReqDetails.done(function (data) {
+
+            var html = '<thead>' +
+
+                                    '<tr class="label-success">' +
+                                       ' <td>' + 'Text Value</td>' +
+
+                                        '<td> Status </td>' +
+                                        '<td>...</td>' +
+                                    '</tr></thead>';
+
+
+            $.each(data, function (i, company) {
+                html +=
+     '<tr>' +
+       '<td>' + company.App_Req_D_Value + '</td>' +
+
+         '<td>' + company.inUse + '</td>' +
+          '<td>' + '<button    class="btn btn-info" onclick="GetChange_Requirement_Details_status(' + company.Application_Req_Details_Id + ')" >change Satus</button>' + '</td>' +
+
+            '</tr>'
+            });
+
+
+
+
+            $('#levelRequermentData').empty();
+            $('#levelRequermentData').append(html);
+
+            $("#ToolData").modal();
+
+        });
+
+
+
+    }
+
+    function AddRequirement_Details() {
+        var Application_Requirement_Id = document.getElementById("Application_Requirement_Id").value;
+        var App_Req_D_Value = document.getElementById("App_Req_D_Value").value;
+
+        var DataIn = { Application_Requirement_Id: Application_Requirement_Id, App_Req_D_Value: App_Req_D_Value };
+
+        var url = "../Applications/AddRequirement_Details/";
+        $.post(url,
+          {
+              Application_Requirement_Id: Application_Requirement_Id,
+              App_Req_D_Value: App_Req_D_Value
+
+          }
+          ).done(function () {
+              AddDropData(Application_Requirement_Id);
+          });
+
+    }
+
+
+
+
+
+    function GetChange_Requirement_Details_status(item) {
+
+        var baseUri = "../Applications/Change_Requirement_Details_status";
+        //
+        var request = $.getJSON(baseUri + '/' + item);
+        request.done(function (data) {
+
+            AddDropData(data);
+
+
+        }
+
+        );
+
+
+
+    }
+
+    function AddLevelReq(item) {
+        $("#Application_Requirement_Id_Sub").val(item);
+        Get_Level_Requerment(item);
+        $("#ModalLevelReq").modal();
+    }
+
+    function AddLevelReqData() {
+        //  var dataS = document.getElementById("LevelReData").serialize();
+
+        var Application_Id = document.getElementById("LevelReData").elements.namedItem("Application_Id").value;
+        var Application_Level_Id = document.getElementById("LevelReData").elements.namedItem("Application_Requirement_Id_Sub").value;
+        var Column_Name_Value = document.getElementById("LevelReData").elements.namedItem("Column_Name_Value").value;
+        var Is_Required = document.getElementById("LevelReData").elements.namedItem("Is_Required").value;
+        var Shared_Table_Id = document.getElementById("LevelReData").elements.namedItem("Shared_Table_Id").value;
+        var Tools_Id = document.getElementById("LevelReData").elements.namedItem("Tools_Id").value;
+        var App_R = { 'Application_Id': Application_Id, 'Application_Level_Id': Application_Level_Id, 'Column_Name_Value': Column_Name_Value, 'Is_Required': Is_Required, 'Shared_Table_Id': Shared_Table_Id, 'Tools_Id': Tools_Id };
+        var url = "../Applications/Add_AppReq_Level/";
+        $.post(url,
+          {
+              App_R
+
+          }
+          ).done(function () {
+              Get_Level_Requerment(Application_Level_Id);
+          });
+
+    }
+    function Get_Level_Requerment(item) {
+
+
+        var Application_Level_Id = item;
+
+        var LReqDetails = $.getJSON("../Applications/Get_AppReq_level/" + Application_Level_Id);
+
+        LReqDetails.done(function (data) {
+
+            var html = '<thead>' +
+
+                                    '<tr class="label-success">' +
+
+                                       ' <td>' + 'Column Name Value</td>' +
+
+                                        '<td> Tool Name </td>' +
+                                        '<td> Table Name</td>' +
+                                        '<td>Status</td>' +
+                                          '<td></td>' +
+                                    '</tr></thead>';
+
+
+            $.each(data, function (i, company) {
+                html +=
+
+     '<tr>' +
+
+
+       '<td>' + company.Column_Name_Value + '</td>' +
+
+         '<td>' + company.Tool_Name + '</td>' +
+          '<td>' + company.Shared_Table_Name_displayed + '</td>' +
+          '<td>' + company.Application_Requirement_In_Use + '</td>' +
+
+           '<td>' + '<button class="btn btn-info" onclick="Change_Level_Requerment(' + company.Application_Requirement_Id + ')">change Satus</button>' + '</td>' +
+          +
+            '</tr>'
+            });
+
+
+
+
+            $('#levelRequermentSub').empty();
+            $('#levelRequermentSub').append(html);
+
+
+
+        });
+    }
+    function Change_Level_Requerment(item) {
+        var VData = $.getJSON("../Applications/UpdateStatusLeveleRequerment/" + item);
+        VData.done(function (Data) {
+            Get_Level_Requerment(Data);
+        });
+
+    }
+  
+ 
+</script>

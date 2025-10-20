@@ -1,0 +1,330 @@
+﻿﻿
+<script>
+    // function GetRequestList() {
+    //     //var Dep = document.getElementById("Department_Id");
+    //     //var DepId = Dep.value;
+    //     var url='@Url.Action("GetApplicationByDepId", "Requests")';
+    //     var ApplicationList = $.getJSON(url);
+    //     ApplicationList.done(function (data) {
+
+    //         var html = ' ';
+
+    //         $.each(data, function (id, items) {
+    //             html += '<option  value="' + items.ApplicationId + ' " >' + items.ApplicationName + '</option>'
+    //         });
+
+    //         html += '</select>';
+    //         $("#ApplicationId").empty();
+    //         $("#ApplicationId").append(html);
+    //     });
+
+
+    // }
+
+    // function GetRequestApplication() {
+    //     var application = document.getElementById("ddlRequest");
+
+    //     var applicationId = application.options[application.selectedIndex].value;
+    //     if (applicationId != null) {
+    //         // window.location.assign("../Requests/RequestForm/" + applicationId);
+
+    //         // window.location.replace("../Requests/RequestForm/" + applicationId);
+    //         /// window.location.replace = "../Requests/RequestForm/" + applicationId;
+    //     }
+    //     // AppRequestPage(applicationId);
+
+    // }
+
+    // function AppRequestPage(AppId) {
+
+    //     var Url = url+"/" + AppId;
+    //     var Appliction = $.getJSON(Url);
+    //     Appliction.done(function (data) {
+
+    //         var html = ''
+
+
+    //         $.each(data, function (i, company) {
+    //             html +=
+    //  '<div class="form-group"><label class="col-md-4 control-label">' + company.Column_Name_Value + '</label><div class="col-md-4 selectContainer"><div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-cog"></i></span>'
+    //             +
+    //              (company.Tools_Id != 1 ? '' : ' <input type="text"  class="form-control" required />')
+
+    //             +
+    //     '</div></div></div>'
+    //         });
+
+
+
+
+    //         $('#dvApplication').empty();
+    //         $('#dvApplication').append(html);
+
+
+    //     });
+
+
+
+    // }
+    function LoadSharedTable(SharedTableId) {
+        var ShareId = SharedTableId;
+
+        var url = '@Url.Action("GetSharedTable", "Requests")';
+        var DropData = $.getJSON(url + "/" + SharedTableId);
+        DropData.done(
+
+            function (data) {
+                var html = '<option value="" >--Select--</option>';
+                console.log(data);
+                $.each(data, function (i, DropD) {
+                    var tes = DropD.dropName;
+                    html += '<option  value="' + DropD.dropId + ' " >' + DropD.dropName + '</option>'
+                }
+
+                );
+                if (SharedTableId == 8144 || SharedTableId == 8145) {
+                    html += '<option value="505" >other</option>';
+                }
+                //html += '</select>';
+                var Div = "#" + ShareId;
+                $(Div).empty();
+                $(Div).append(html);
+
+
+            }
+
+
+        );
+
+    }
+
+    function LoadSharedTableSelected(SharedTableId, Svalue) {
+
+        var ShareId = SharedTableId;
+        var url = '@Url.Action("GetSharedTable", "Requests")';
+        var DropData = $.getJSON(url + "/" + SharedTableId);
+        DropData.done(
+
+            function (data) {
+                var html = '';
+                $.each(data, function (i, DropD) {
+                    var tes = DropD.Drop_Name;
+                    if (Svalue == DropD.Drop_Id) {
+                        html += '<option  value="' + DropD.Drop_Id + ' "  selected >' + DropD.Drop_Name + '</option>'
+                    }
+                    //else
+                    //{
+                    //    html += '<option  value="' + DropD.Drop_Id + ' " >' + DropD.Drop_Name + '</option>'
+                    //}
+
+                }
+
+                );
+                //html += '</select>';
+                var Div = "#" + ShareId;
+                $(Div).empty();
+                $(Div).append(html);
+                $(Div).select2({
+                    placeholder: "Select",
+                    allowClear: true
+                });
+
+            }
+
+
+        );
+
+    }
+    function LoadEmp() {
+
+        var url = '@Url.Action("SearchJson", "Requests")';
+        var DropData = $.getJSON(url, { EMPSTATUSID: 1 });
+        DropData.done(
+
+            function (data) {
+
+                //var $NewSele = $("<select class='form-control Asign'  id='Assigned_To_Emp_Id' name='Assigned_To_Emp_Id' required ></select>");
+                //$("#divAssigned").html($NewSele);
+                var $select = document.getElementById('Assigned_To_Emp_Id');
+
+
+                $.each(data, function (i, DropD) {
+
+
+                    var $option = $("<option>", { value: DropD.EMPID, text: DropD.FIRSTNAME + ' ' + DropD.LASTNAME + '-' + DropD.EMPLOYEE_NO });
+                    $option.appendTo($select);
+                }).done(function (data) {
+
+                    $('#Assigned_To_Emp_Id').select2({
+                        placeholder: "Select",
+                        allowClear: true
+                    });
+                });
+
+
+
+            });
+
+
+
+
+
+
+
+    }
+    function EmpLeaves(empId, DivId) {
+        try {
+
+            var EMPID = empId;
+            var Url = '@Url.Action("Get_LEAVE_worthy", "LEAVE_PROCESS")';
+            $.getJSON(Url, { EMPID }, function (result) {
+                var DivUl = "#" + DivId
+                TbLEAVE_worthy(result, DivUl);
+
+            });
+
+
+
+        }
+        catch (ex) {
+            alert(ex);
+        }
+    }
+    function TbLEAVE_worthy(data, DivUl) {
+        try {
+
+            var html = "";
+            html += "<table class='table table-bordered text-center  ' id='tbLEAVEworthy' > <thead> <tr style='text-align:center'>";
+            html += '<th>Carry Forward Days</th>';
+            html += '<th>Annual Leave for Current Year</th>';
+            html += '<th>Total Days Available</th>';
+            html += '<th>Leave Taken to Date</th>';
+            html += '<th>Remaining Days</th>';
+
+
+            html += " </tr> </thead>";
+            html += "<tbody>";
+            $.each(data, function (key, v) {
+
+                html += "<tr>";
+                html += "<td>" + v.ForwardDays + "</td>";
+                html += "<td>" + v.AnnualBalance + "</td>";
+                html += "<td>" + v.worthydays + "</td>";
+                html += "<td>" + v.Taken_Days + "</td>";
+                html += "<td>" + v.TotalRemainingDays + " <input type='hidden' id='LeaveDaysBalance' value='" + v.TotalRemainingDays + " ' /> </td>";
+
+                html += "</tr>";
+            }
+            );
+
+
+            html += "</tbody></table>";
+            $(DivUl).empty();
+            $(DivUl).append(html);
+
+
+        }
+        catch (e) {
+            alert(e);
+        }
+    }
+    function Travelingby() {
+        try {
+            var s = $("#8146").val();
+            if (s == 2065) {
+
+                $('#Div8147').hide();
+                Swal.fire("warning!", "You will submit Expenses Report when you return from  Business Travel!", "error");
+            }
+            else {
+
+                $('#Div8147').show();
+            }
+
+        }
+        catch (ex) {
+            alert(ex);
+        }
+    }
+
+    function AddExpense(empId, DivId, Request_ID) {
+        try {
+
+            var EMPID = empId;
+            var Url = '@Url.Action("AddExpense", "Requests")';
+            var DivUl = "#" + DivId;
+
+            if (Request_ID != null) {
+                var UrlDe = '@Url.Action("ExpenseDetails", "Requests")';
+                $.get(UrlDe, { Request_ID: Request_ID }, function (result) {
+
+
+
+                    $(DivUl).empty();
+                    $(DivUl).append(result);
+
+                });
+
+
+            }
+            else {
+                $.get(Url, function (result) {
+
+
+
+                    $(DivUl).empty();
+                    $(DivUl).append(result);
+
+                });
+            }
+
+
+        }
+        catch (ex) {
+            alert(ex);
+        }
+    }
+    function AddNewCity() {
+        try {
+            var DropCityFrom = $("#8144").val();
+            var DropCityTo = $("#8145").val();
+            if (DropCityFrom == 505 || DropCityTo == 505) {
+
+
+
+                var Url = "@Url.Action("AddCity", "Cities")";
+                $.get(Url, function (data) {
+                    $("#DivRequestDetail").empty();
+                    $("#DivRequestDetail").append(data)
+                    ShowHide('DivRequestForm', 'DivRequestDetail');
+                })
+                //alert(DropCityFrom);
+                //alert(DropCityTo);
+            }
+        }
+        catch (e) {
+            alert(e);
+        }
+    }
+
+    function GetRequirementOrder(empId, DivId) {
+        try {
+            var Request_ID = $("#Request_ID").val();
+            var EMPID = empId;
+            var Url = '@Url.Action("GetRequirementOrder", "Requests")';
+            $.get(Url, { Request_ID: Request_ID }, function (result) {
+                var DivUl = "#" + DivId
+                $(DivUl).empty();
+                $(DivUl).append(result);
+
+            });
+
+
+
+        }
+        catch (ex) {
+            alert(ex);
+        }
+    }
+
+</script>

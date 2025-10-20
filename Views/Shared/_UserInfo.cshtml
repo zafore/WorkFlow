@@ -1,0 +1,36 @@
+﻿@{
+
+    Layout = null;
+}
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script>
+
+
+    $(document).ready(function () {
+        try {
+            GetUserInfo();
+        }
+        catch (e) {
+            alert(e);
+
+        }
+    });
+    function GetUserInfo() {
+
+        var Url = '@Url.Action("GetEmpJson", "Emp")';
+        var ResultData = $.getJSON(Url);
+        ResultData.done(function (e) {
+            $("#UserName").empty();
+            $("#UserName").append(e.FullName);
+            if (e.PHOTO != "") {
+                var photo = e.PHOTO;
+              
+                document.getElementById("OpenImgUpload").src = photo ;
+                    }
+
+                });
+
+    }
+
+</script>

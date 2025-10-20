@@ -1,0 +1,128 @@
+﻿<script>
+
+   
+    function LevelRequerment(Application_Level_Id)
+    {
+
+        try {
+            StartLoader();
+
+            var Url = '@Url.Action("Create", "Application_Requirement")';
+            var DataReslt = $.get(Url, { Application_Level_Id });
+            DataReslt.done(function (data) {
+                ShowHide('DivmainApp', 'DivLevelDetails');
+                $("#DivLevelDetails").empty();
+                $("#DivLevelDetails").append(data);
+                EndLoader();
+            });
+
+        }
+        catch (ex) {
+            EndLoader();
+            alert(ex);
+
+        }
+    }
+    function LevelRequermentAssign(Application_Level_Id) {
+
+        try {
+            StartLoader();
+
+            var Url = '@Url.Action("Index", "Application_Level_Assigned")';
+            var DataReslt = $.get(Url, { Application_Level_Id });
+            DataReslt.done(function (data) {
+                ShowHide('DivmainApp', 'DivLevelDetails');
+                $("#DivLevelDetails").empty();
+                $("#DivLevelDetails").append(data);
+                EndLoader();
+            });
+
+        }
+        catch (ex) {
+            EndLoader();
+            alert(ex);
+
+        }
+    }
+    function DeleteLevelRequermentAssign(Application_Level_Assigned_Id) {
+
+        try {
+            StartLoader();
+
+            var Url = '@Url.Action("DeleteConfirmed", "Application_Level_Assigned")';
+            var DataReslt = $.get(Url, { id:Application_Level_Assigned_Id });
+            DataReslt.done(function (data) {
+                ShowHide('DivmainApp', 'DivLevelDetails');
+                $("#DivLevelDetails").empty();
+                $("#DivLevelDetails").append(data);
+                EndLoader();
+            });
+
+        }
+        catch (ex) {
+            EndLoader();
+            alert(ex);
+
+        }
+    }
+    
+    function GetEmpByDep() {
+
+        var url = '@Url.Action("SearchJson","Emp")';
+
+        var Depdata = $.getJSON(url);
+
+
+        Depdata.done(function (data) {
+            var html = '   <option value="0">--Select Emp--</option>';
+
+
+
+            $.each(data, function (i, Depv) {
+                html +=
+                     '  <option value=" ' + Depv.EMPID + '"> ' + Depv.FIRSTNAME + '  </option>'
+            });
+
+    
+
+
+            $('#Assigned_To_Emp_Id').empty();
+            $('#Assigned_To_Emp_Id').append(html);
+        }
+
+    );
+
+
+
+    }
+    function GetDesplayLinkData() {
+
+        var url = '@Url.Action("DisplayLink", "Application_Requirement")';
+
+        var Depdata = $.getJSON(url);
+
+
+        Depdata.done(function (data) {
+            var html = '   <option value="0">--Select--</option>';
+
+
+
+            $.each(data, function (i, Depv) {
+                html +=
+                     '  <option value=" ' + Depv.DisplaylinkId + '"> ' + Depv.DisplaylinkName + '  </option>'
+            });
+
+
+
+
+            $('#DisplaylinkId').empty();
+            $('#DisplaylinkId').append(html);
+        }
+
+    );
+
+
+
+    }
+  
+</script>

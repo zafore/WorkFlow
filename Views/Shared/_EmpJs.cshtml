@@ -1,0 +1,242 @@
+﻿@{
+    Layout = null;
+}
+
+<script>
+   
+
+
+    function LoadFamily()
+    {
+        try
+        {
+            StartLoader();
+            var EMPID = document.getElementById("EMPID").value;
+            var Url = '@Url.Action("Index", "Family_Members")';
+            var DataReslt = $.get(Url, { EmpId: EMPID });
+                DataReslt.done(function (data) {
+                $("#DivFamily").empty();
+                $("#DivFamily").append(data);
+                            EndLoader();
+                        });
+
+
+                    }
+        catch(ex)
+        {
+            alert(ex);
+                }
+    }
+
+    function LoadFamilyList() {
+        try {
+            StartLoader();
+            var EMPID = document.getElementById("EMPID").value;
+            var Url = '@Url.Action("List", "Family_Members")';
+            var DataReslt = $.get(Url, { EmpId: EMPID });
+            DataReslt.done(function (data) {
+                $("#DivFamily").empty();
+                $("#DivFamily").append(data);
+                EndLoader();
+            });
+
+
+        }
+        catch (ex) {
+            alert(ex);
+        }
+    }
+            function Load_EmpEdit()
+            {
+                try
+                {
+                    StartLoader();
+                    var EMPID = document.getElementById("EMPID").value;
+                    var Url = '@Url.Action("Edit")';
+                    var DataReslt = $.get(Url, { id: EMPID });
+                    DataReslt.done(function (data) {
+                $("#EmpEdit").empty();
+                $("#EmpEdit").append(data);
+                        EndLoader();
+                    });
+
+
+                }
+                catch(ex)
+                {
+                    EndLoader();
+                    alert(ex);
+                }
+
+            }
+    function PrivilegeType()
+    {
+        try
+        {
+            var privilegeopertaionType = document.getElementById("privilegeopertaionType").value;
+            if (privilegeopertaionType ==1)
+            {
+                $('#divprivilegMonth').hide();
+                $('#divPrivilegeNote').hide();
+            } else if (privilegeopertaionType == 2)
+            {
+                $('#divprivilegMonth').show();
+                $('#divPrivilegeNote').show();
+
+            }
+           
+
+        }
+        catch(ex)
+        {
+            alert(ex);
+        }
+
+
+
+    }
+    function DEDUCTIONType() {
+        try {
+            var DEDUCTIONType = document.getElementById("DEDUCTIONType").value;
+            if (DEDUCTIONType == 1) {
+                $('#divDEDUCTIONMonth').hide();
+                $('#divDEDUCTIONMonth').hide();
+            } else if (DEDUCTIONType == 2) {
+                $('#divDEDUCTIONMonth').show();
+                $('#divDEDUCTIONMonth').show();
+
+            }
+
+
+        }
+        catch (ex) {
+            alert(ex);
+        }
+
+
+
+    }
+    function AddPriveleges() {
+        try {
+
+            var privilegeopertaionType = document.getElementById("privilegeopertaionType").value;
+            if (privilegeopertaionType == 0) {
+                alert("Select opertation Type!!");
+                return;
+            }
+            else {
+                var PRIVILEGE_ID = document.getElementById("PRIVILEGE_ID").value;
+                var Privilege_AMOUNT = document.getElementById("Privilege_AMOUNT").value;
+                var EMPID = document.getElementById("EMPID").value;
+                var privilegForMonth = document.getElementById("privilegForMonth").value;
+                var PrivilegeNote = document.getElementById("PrivilegeNote").value;
+                
+                var Url = '@Url.Action("AddEmpPrivilegeMaster", "Emp_Privilege_Master")';
+
+                $.getJSON(Url, { PRIVILEGE_ID, Privilege_AMOUNT, EMPID,privilegForMonth, privilegeopertaionType, PrivilegeNote }, function (result) {
+
+                    TbPrivileges(result);
+
+                }
+
+                );
+            }
+
+        }
+        catch (e) {
+            alert(e);
+        }
+
+    }
+
+            function GetDivistionByCompany() {
+                try {
+                    var CompId = document.getElementById("COMPID").value;
+                    var Url = '@Url.Action("GetDIVISIONByCompId")';
+                    var DataResult = $.getJSON(Url, { CompId });
+                    DataResult.done(function (data) { LoadDivistion(data); LoadDparment(data) });
+
+                }
+                catch (e) {
+                    alert(e);
+                }
+
+            }
+            function GetDepartmentByDivision() {
+                try {
+                    var DIVISIONID = document.getElementById("DIVISIONID").value;
+                    var Url = '@Url.Action("GetDepartment")';
+                    var DataResult = $.getJSON(Url, { DIVISIONID });
+                    DataResult.done(function (data) { LoadDparmentNormal(data) });
+
+                }
+                catch (e) {
+                    alert(e);
+                }
+
+            }
+            function LoadDivistion(data) {
+                try
+                {
+            
+            $('#DIVISIONID').empty();
+            $(data).each(function () {
+                $("<option />", {
+                            val: this.DIVISIONID,
+                    text: this.DIVISION_NAME
+                }).appendTo('#DIVISIONID');
+                    });
+
+                }
+                catch(e)
+                {
+                    alert(e);
+                }
+
+            }
+            function LoadDparmentNormal(data) {
+                try {
+
+            $('#DEPT_ID').empty();
+            $(data).each(function (key1, x) {
+              
+                
+                    $("<option />", {
+                        val: x.Department_Id,
+                            text: x.Department_Name_Eng
+                    }).appendTo('#DEPT_ID');
+
+                    });
+                }
+
+                catch (e) {
+                    alert(e);
+                }
+
+            }
+            function LoadDparment(data) {
+                try {
+       
+            $('#DEPT_ID').empty();
+            $(data).each(function (key1,x) {
+                $(x.DEPARTMENT).each(function (key2, m) {
+                            console.log(m);
+                    $("<option />", {
+                                val: m.DEPT_ID,
+                        text: m.DEPT_NAME
+                    }).appendTo('#DEPT_ID');
+                        });
+                    });
+                }
+
+                catch (e) {
+                    alert(e);
+                }
+
+            }
+
+
+
+
+
+        </script>

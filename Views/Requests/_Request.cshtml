@@ -1,0 +1,75 @@
+﻿<script>
+    $(document).ready(function () {
+        GetApplication();
+    });
+
+    function GetApplication() {
+        try {
+            var url = "@Url.Action("GetApplication")";
+            $.getJSON(url, function (data) {
+                console.log(data);
+                var id = "#ApplicationId";
+                LoadSelectGroup(data, id);
+            })
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+    function LoadSelectGroup(data,id) { 
+        try {
+            var html = "<option>--Select from List--</option>"
+            $.each(data, function (k, l) {
+
+                html += "<optgroup label=" + l.label + ">";
+                $.each(l.options, function (i, o) {
+                    html += "<option value=" + o.value + ">" + o.label + "</option>";
+                });
+                      html += "</optgroup>";
+
+            });
+            $(id).empty().append(html);
+            $(id).select2();
+        }
+        catch (e) { 
+            console.log(e);
+        }
+    }
+
+    // try {
+    //     $("#FormNewRequest").submit(function (e) {
+    //         var ApplicationId = $("#ApplicationId").val();
+    //         var url = "@Url.Action("_LoadNewForm")";
+    //         $.get(url, { ApplicationId: ApplicationId }, function (data) {
+
+    //             console.log(data);
+    //             $("#DivMain").empty().append(data);
+
+    //         })
+
+    //     });
+    // } catch (e)
+    function GetNewForm() {
+        var ApplicationId = $("#ApplicationId").val();
+        var url = "@Url.Action("_LoadNewForm")";
+        $.get(url, { ApplicationId: ApplicationId }, function (data) {
+
+            $("#DivMain").empty().append(data);
+         
+        })
+    }
+    function PostNewRequest() {
+        try {
+            if ($("#FormPostNewRequest").valid()) {
+                console.log('valed')
+            }
+            else { 
+         console.log('dd')
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+</script>

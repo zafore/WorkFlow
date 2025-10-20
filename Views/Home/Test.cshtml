@@ -1,0 +1,99 @@
+@{
+    ViewData["Title"] = "اختبار النظام";
+}
+
+<div class="container py-4">
+    <div class="card-modern p-4">
+        <h2 class="mb-4 text-primary-emphasis">
+            <i class="fas fa-user-check me-2"></i>
+            معلومات المستخدم الحالي
+        </h2>
+        <hr class="mb-4" />
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-card">
+                    <h5><i class="fas fa-user me-2"></i>اسم المستخدم</h5>
+                    <p class="text-muted">@User.Identity?.Name</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-card">
+                    <h5><i class="fas fa-id-card me-2"></i>معرف المستخدم</h5>
+                    <p class="text-muted">@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="info-card">
+                    <h5><i class="fas fa-signature me-2"></i>الاسم الكامل</h5>
+                    <p class="text-muted">@User.FindFirst("FullName")?.Value</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-card">
+                    <h5><i class="fas fa-fingerprint me-2"></i>الهوية</h5>
+                    <p class="text-muted">@User.FindFirst("UserIdentity")?.Value</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="info-card">
+                    <h5><i class="fas fa-shield-alt me-2"></i>الأدوار</h5>
+                    <div class="roles-list">
+                        @foreach (var role in User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role))
+                        {
+                            <span class="badge bg-primary me-2">@role.Value</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="@Url.Action("NewRequest", "Requests")" class="btn btn-primary-modern btn-modern me-3">
+                <i class="fas fa-file-plus me-2"></i>
+                تقديم طلب جديد
+            </a>
+            <a href="@Url.Action("Index", "Applications")" class="btn btn-success-modern btn-modern me-3">
+                <i class="fas fa-list-alt me-2"></i>
+                إدارة التطبيقات
+            </a>
+            <form method="post" action="@Url.Action("Logout", "Account")" class="d-inline">
+                <button type="submit" class="btn btn-danger-modern btn-modern">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    تسجيل الخروج
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .info-card h5 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .roles-list {
+        margin-top: 0.5rem;
+    }
+
+    .badge {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+    }
+</style>

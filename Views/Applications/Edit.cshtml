@@ -1,0 +1,1560 @@
+﻿@model WorkFlow.Models.Application
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<WorkFlow.Models.SharedTable> sharedTables = ViewBag.Shared_Table_Id as List<WorkFlow.Models.SharedTable>;
+    List<WorkFlow.Models.Tool> Tools = ViewBag.Tools_Id as List<WorkFlow.Models.Tool>;
+
+}
+
+ <link href="~/js/select2/select2.min.css" rel="stylesheet" />  
+
+<style>
+    .popHeader {
+        width: 100%;
+        height: 50px;
+        padding: 20px;
+        background-color: #eeeeee69;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+    }
+
+    .black_overlay {
+        display: none;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index: 1001;
+        -moz-opacity: 0.7;
+        opacity: .70;
+        filter: alpha(opacity=70);
+    }
+
+    .white_content {
+        display: none;
+        position: absolute;
+        top: 10%;
+  /*       left: 25%;
+        right:25%; */
+        width: 90%;
+        height: 70%;
+        padding: 16px;
+        border: 2px solid black;
+        background-color: #0e5e8b;
+        z-index: 1002;
+        overflow: auto;
+    }
+
+    .textright {
+        float: right;
+    }
+
+
+
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: 15px;
+        text-align: center;
+        top: 10px;
+        width: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.1em;
+        color: white;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 2px 2px 3px #000;
+        -webkit-box-shadow: 2px 2px 3px #000;
+        box-shadow: 2px 2px 3px #000;
+    }
+    .nodeText{
+        font-size: 13px;
+     /*    margin-top: 70%; */
+        color: #fff3f3;
+        background-color:  rgba(0,0,0,0.5);
+      padding:5px; 
+      
+    }
+
+    .bfc-light {
+        background-color:#abcd!important;
+    }
+
+</style>
+
+
+
+<div id="chart"></div>
+
+
+
+<div id="popupBox" class="white_content">
+    <div class="popHeader">
+    <h1 style="display:inline-block; float:left"></h1>
+    <a href="javascript:void(0)"
+       onclick="document.getElementById('popupBox').style.display='none';document.getElementById('popupBackground').style.display='none'"
+       class="textright close">X</a>
+    </div>
+    <div id="popupBox" >
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab active" data-tab="events"> <h3 class="stepper-title">معلومات للادخال  <span class="fa fa-file"></span>   </h3></button>
+                <button class="tab" data-tab="materials">       <h3 class="stepper-title">  القرار و الروابط <span class="fa fa-retweet"></span>   </h3></button>
+                <button class="tab" data-tab="AssignTo"><h3 class="stepper-title"> الاسناد  <span class="fa fa-share"></span> </h3> </button>
+                <button class="tab" data-tab="doot"><h3 class="stepper-title"> التصعيد و التنبيهات<span class="fa fa-paper-plane"></span></h3> </button>
+            </div>
+            <div class="tab-content" id="events">
+                <div class="card">
+
+
+                    <div class="card-body">
+
+
+
+                        <form id="FormRequrment">
+
+                            <input type="hidden" name="ApplicationId" id="ApplicationId" value="">
+                            <input type="hidden" name="Application_Level_Id" id="Application_Level_Id" value="">
+
+
+
+                            <input type="hidden" name="NodeID" id="NodeID" value="">
+
+
+                            <div class="row ">
+                                <div class="parsley-input col-md-4" id="fnWrapper">
+
+                                    <label>اسم المرحلة </label>
+
+                                    <input name="Application_Level_Name" id="Application_Level_Name" placeholder="اسم المرحلة" class="form-control" type="text" required="">
+                                </div>
+                            </div>
+                            <!-- Form Name -->
+                            <!-- Text input-->
+
+                            <div class="row ">
+                                <div class="parsley-input col-md-4" id="fnWrapper">
+
+                                    <label>Column Name</label>
+
+                                    <input name="Column_Name_Value" placeholder="Column Name" class="form-control" type="text" required>
+                                </div>
+
+
+                                <!-- Text input-->
+
+                                <div class="parsley-input col-md-4" id="fnWrapper">
+                                    <label>Tools</label>
+
+
+
+                                    <select class="form-control" id="Tools_Id" name="Tools_Id"  required >
+
+
+                                        <option value="">--Seleect Tool--</option>
+                                        @foreach (var item in Tools)
+                                        {
+                                            <option value=@item.ToolsId>@item.ToolName</option>
+                                        }
+
+                                    </select>
+
+                                </div>
+                                <div class="parsley-input col-md-4" id="fnWrapper">
+
+                                    <label>Is Required</label>
+
+                                    <select id="Is_Required" name="Is_Required" class="form-control">
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row ">
+
+
+                                <div class="parsley-input col-md-6" id="fnWrapper">
+                                    <label>Select Tables</label>
+
+
+
+                                    <select class="form-control" id="Shared_Table_Id" name="Shared_Table_Id">
+                                        <option value="">--Select Table--</option>
+                                        @foreach (var item in sharedTables)
+                                        {
+                                            <option value="@item.SharedTableId">@item.SharedTableNameDisplayed</option>
+                                        }
+
+                                    </select>
+
+                                </div>
+                                <div class="parsley-input col-md-6" id="fnWrapper">
+
+                                    <label>DisplayLink</label>
+                                    <select id="DisplaylinkId" name="DisplaylinkId" class="form-control">   <option value="0">--Select--</option>  <option value=" 1"> Employee leaves  </option>  <option value=" 2"> Add Expense  </option>  <option value=" 3"> Requirement Order  </option></select>
+
+                                </div>
+                            </div>
+                            <div class="row ">
+                            </div>
+                            <div class="row ">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label"></label>
+                                    <div class="col-md-4">
+                                        <br>
+                                        <button type="submit" class="btn btn-warning" >SUBMIT </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>                    <div id="DivRequirment">
+                        </div>
+                    </div>
+                    <div id="DivRequirmentDetail"></div>
+                </div>
+            </div>
+            <div class="tab-content" id="materials" style="display: none">
+
+                <div class="card">
+
+
+                    <div class="card-body">
+                        <div id="DivDecision">
+                            <form id="FormDecision">
+                                <table class="table table-striped table-bordered">
+                                    <tr>
+                                        <td><span style="font-size:18px "> القرار</span></td>
+                                        <td style="width:30%">
+                                            <select id="ActionList" name="ActionId" class="form-control " placeholder="Choose skills" data-allow-clear="1">
+                                            </select>
+                                        </td>
+                                        <td><span style="font-size:18px "> التحول الي </span></td>
+                                        <td><select class="form-control" id="SLink" name="ApplictionLinkId"></select></td>
+
+
+                                        <td><span style="font-size:18px "> الية القرار </span></td>
+                                        <td>
+                                            <select class="form-control" name="MustAll">
+
+                                                <option value="0">موافقة فردية </option>
+                                                <option value="1"> موافقة الكل</option>
+                                            </select>
+                                        </td>
+
+                                        <td><button type="button" onclick="AddCondition()" class="btn btn-info" style="margin-top:-5px; margin-right:1%">  اضافة  <span class="fa fa-plus"></span></button></td>
+
+                                    </tr>
+                                </table>
+                            </form>
+                            <div class="row">
+
+                                <div class="parsley-input col-md-2"></div>
+                                <div class="parsley-input col-md-4">
+                                </div>
+                                <div class="parsley-input col-md-2"></div>
+                            </div>
+
+
+
+
+                            @*          <div id="DivActionList"></div> *@
+                            <table id="trRelation" class="table table-striped table-bordered">
+               
+                        
+
+                            </table>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="tab-content" id="AssignTo" style="display: none">
+                <!-- content -->
+                <div class="card">
+                    <div class="card-body">
+                        <form id="FormAssagin">
+                            <input type="hidden" name="ApplicationLevelId" id="ForAssignApplicationLevelId" />
+                            <div class="row ">
+                                <div class="parsley-input col-md-2" id="fnWrapper">
+
+                                    <label>الاسناد الي</label>
+                                    <select class="form-control selectpicker" id="AssginType" name="AssginTypeId" onchange="LoadAssginType()" required>
+                                        <option>--اختار--</option>
+                                        <option value=1>اسناد الي موظفين</option>
+                                        <option value=2>اسناد الي وظيفة</option>
+                                    </select>
+
+
+                                </div>
+
+
+                                <!-- Text input-->
+
+                                <div class="parsley-input col-md-3" id="fnWrapper">
+                                    <label>اخيار الموظفين</label>
+
+                                    <select id="Assigned_To_Emp_Id" name="AssignedToEmpId" class="form-control selectpicker" data-size="7" data-live-search="true" placeholder="بحث عن موظف..."></select>
+                                    @*
+                                    <input list="Assigned_To_Emp_Id" class="form-control" placeholder="بحث عن موظف...">
+                                    <datalist id="Assigned_To_Emp_Id" name="Assigned_To_Emp_Id"  onkeydown="LoadSearchEmp()">
+
+                                    </datalist> *@
+
+
+
+                                </div>
+                                <div class="parsley-input col-md-3" id="fnWrapper">
+
+                                    <label>اختيار وظيفة </label>
+
+                                    <select id="ManagerType_Id" name="ManagerTypeId" class="form-control selectpicker">
+                                    </select>
+                                </div>
+                                <div class="parsley-input col-md-2" id="fnWrapper">
+
+                                    <button type="button" class="btn btn-success" onclick="AddAssagin()"><span class="fa fa-save"></span></button>
+                                </div>
+                            </div>
+                        </form>
+                        <table id="tbAssagin" class="table table-striped table-bordered" style="margin-top:1%">
+                
+
+                        </table>
+                    </div>
+                </div>
+
+                <!--End-->
+            </div>
+            <div class="tab-content" id="doot" style="display: none">
+                <!-- content -->
+                <div id="DivNotification">
+                    <form id="FormNotification">
+                        <table class="table table-striped table-bordered">
+                            <tr>
+                                <td><span style="font-size:18px "> القرار</span></td>
+                                <td style="width:30%">
+                                    <select id="NotificationActionId" name="ActionId" class="form-control " placeholder="Choose skills" required>
+                                    </select>
+                                </td>
+                                <td><span style="font-size:18px "> التنبيه   </span></td>
+                                <td><select class="form-control" id="NotificationLinks" name="ApplictionLinkId" required></select></td>
+
+                                <td><span style="font-size:18px "> الموظفين   </span></td>
+                                <td><select class="form-control" id="NotificationEmp" name="ToEmpId" required></select></td>
+                    
+
+                                <td><button type="submit"  class="btn btn-info" style="margin-top:-5px; margin-right:1%">  اضافة  <span class="fa fa-plus"></span></button></td>
+
+                            </tr>
+                        </table>
+                    </form>
+                    <table class="table table-striped table-bordered" id=trNotification>
+
+                    </table>
+           
+
+
+
+
+  
+          
+                </div>
+
+                <!--End-->
+            </div>
+        </div>
+
+
+
+
+
+
+
+    </div>
+
+</div>
+<div id="popupBackground" class="black_overlay"></div>
+
+
+
+<!-- Modal Structure -->
+@* <div class="modal fade" id="largeModal" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
+    <div class="modal-body">
+
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="largeModalLabel">تعديل </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div> *@
+
+            <!--end::Card body-->
+
+@*         </div>
+    </div>
+</div>
+ *@
+
+<script src="~/js/jquery-3.6.0.min.js"></script>
+
+<script src="~/js/select2/select2.min.js"></script>
+@Html.Partial("_JSApplication")
+@Html.Partial("_FlowChart")
+@Html.Partial("_Request")
+
+@* <link href="~/multipleselect/multiple-select.css" rel="stylesheet" />
+<script src="~/multipleselect/multiple-select.js"></script> *@
+
+<script>
+
+
+
+
+
+    var ActionList = [];
+    var ApplicationId = "@ViewBag.AppId"
+    $(document).ready(function () {
+        LoadNodes();
+        // $("#Assigned_To_Emp_Id").select2({ matcher: matchStart });
+        // $("#ActionList").select2()
+  
+        
+    });
+    function matchStart(params, data) {
+       
+        // If there are no search terms, return all of the data
+        if ($.trim(params.term) === '') {
+    
+            return data;
+        }
+        else{
+            LoadSearchEmpP(params.term)
+         
+        }
+
+
+        return null;
+    }
+   
+    function LoadNodes() {
+        var ApplicationIdEncript = "@ViewBag.id";
+        try {
+            var url = "@Url.Action("ApplicationLevelDetails")";
+            $.getJSON(url, { id: ApplicationIdEncript }, function (data) {
+                console.log(data);
+
+                sessionStorage.setItem("Form", JSON.stringify(data));
+
+                chart.load(data)
+
+
+
+            })
+        }
+        catch (e) {
+            console.log(e);
+        }
+
+    }
+
+
+
+    // Select all elements with the class 'nav-item'
+    const navItems = document.querySelectorAll('.stepper-item');
+
+    // Add an event listener to each nav item
+    navItems.forEach(item => {
+        item.addEventListener('click', function () {
+            // Remove 'current' class from any item that has it
+            document.querySelector('.current')?.classList.remove('current');
+
+            // Add 'current' class to the clicked item
+            this.classList.add('current');
+        });
+    });
+
+
+
+
+
+
+    let chart = new FlowChart('#chart');
+    chart.onChanged(function () {
+        var data = chart.json();
+        //post data to server
+    });
+
+
+    var TestNode = sessionStorage.getItem("Form");
+    console.log(TestNode);
+
+
+
+    chart.load(TestNode)
+
+
+    function Save() {
+        try {
+            var GetData = JSON.parse(sessionStorage.getItem("Form"));
+
+            var Url = "@Url.Action("Save")";
+
+            // $.post(Url, { flowchartData: TestNode }, function (e) {
+
+            //     console.log(e);
+            // })
+            var Sdata = JSON.stringify(GetData);
+            console.log(Sdata);
+            $.ajax({
+                url: '/Home/Save',
+                type: 'POST',
+                contentType: 'application/json', // Make sure this is correctly set
+                data: Sdata, // Ensure the data is a JSON string
+                success: function (response) {
+                    alert('Flowchart saved successfully!');
+                },
+                error: function (error) {
+                    alert('Error saving flowchart: ' + error.responseText);
+                }
+            });
+
+        }
+
+
+        catch (e) {
+            console.log(e);
+        }
+
+    }
+    function AddAssagin() { 
+        try {
+
+            console.clear();
+            const form = document.getElementById('FormAssagin');
+
+            console.log(form);
+            const formData = new FormData(form);
+
+            // Convert FormData to an object
+            const formObject = {};
+
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+          var ID=  $("#ForAssignApplicationLevelId").val();
+
+            var body = JSON.stringify(formObject);
+            var url = "@Url.Action("AddLevelAssign")";
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json', // Make sure this is correctly set
+                data: body, // Ensure the data is a JSON string
+                success: function (response) {
+                    GetLevelAssign(ID)
+                    console.log('saved successfully!');
+                },
+                error: function (error) {
+                    console.log('Error saving flowchart: ' + error.responseText);
+                }
+            });
+        }
+        catch (e) {
+            console.log(e);
+        }    
+    }
+    function OpenFormDesign(ID, Text) {
+
+        var TestNode = JSON.parse(sessionStorage.getItem("Form"));
+        var Node = TestNode.nodes;
+        console.log(Node);
+        const NodeValues = Node.find(x => x.id == ID);
+
+        console.log(NodeValues);
+        $("#NodeID").val(ID);
+        $("#Application_Level_Id").val(ID);
+        $("#ForAssignApplicationLevelId").val(ID);
+        $("#ApplicationId").val("@ViewBag.AppId");
+
+        $("#Application_Level_Name").val(NodeValues.text);
+        
+        LoadRequerment(ID);
+        LoadDecison(ID);
+        LoadActionList();
+        LoadLinkCondition(ID);
+        GetLevelAssign(ID);
+        GetApplicationNotification(ID)
+        document.getElementById('popupBox').style.display = 'block'; document.getElementById('popupBackground').style.display = 'block'
+        // if (NodeValues) {
+        // 	NodeValues.text = "Paris"; // Changing the TextData
+        // 	console.log(NodeValues);
+        // }
+        // else {
+        // 	NodeValues.text = "Paris";
+        // 	console.log(NodeValues);
+        // }
+
+        // sessionStorage.setItem("Form", JSON.stringify(TestNode));
+
+        // chart.load(TestNode)
+        // // Get the modal element by ID
+        // var modalElement = document.getElementById('largeModal');
+
+        // // Initialize the modal using Bootstrap's Modal class
+        // var modal = new bootstrap.Modal(modalElement);
+
+        // // Show the modal
+        // modal.show();
+    }
+    function LoadRequerment(ID) {
+        try {
+            var url = "@Url.Action("_LoadForm")";
+
+            $.get(url, { ApplicationLevelId: ID }, function (data) {
+                $("#DivRequirment").empty();
+                $("#DivRequirment").append(data);
+
+            })
+
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    function DeleteRequement(ApplicationRequirementId) {
+        try {
+
+            var url = "@Url.Action("DeleteRequement")";
+            $.getJSON(url, { ApplicationRequirementId: ApplicationRequirementId }, function (R) {
+                console.log(R.data);
+                var ApplicationLevelId = R.data.applicationLevelId;
+                LoadRequerment(ApplicationLevelId);
+                Success();
+            })
+          
+
+
+        }
+        catch (e) {
+            console.log(e);
+            error();
+        }
+    }
+
+    function GetApplicationNotification(ApplicationLevelId) {
+        try
+        {
+            var url = "@Url.Action("GetApplicationNotification")";
+            $.getJSON(url, { ApplicationLevelId: ApplicationLevelId }, function (R) {
+               console.log(R.data);
+                var data = R.data;
+                var html = "<thead><tr>";
+
+                html += "<th> القرار </th>";
+         
+                html += "<th>  تنبيه </th>";
+                html += "<th>  الشخص </th>";
+                html += "<th> </th>     </tr>  </thead>"
+                html += "<tbody>";
+                $.each(data, function (x, v) {
+                    html += "<tr>"
+
+          
+            
+                    html += "<td>" + v.actionNameArabic + "</td>";
+                    html += "<td>" + v.toApplicationLevelName + "</td>";
+                    html += "<td>" + v.employeeName + "</td>";
+                   
+                    html += "<td class='text-center'><span class='fa fa-trash ' style='color:#ff0000b3' onclick='DeleteNotification(" + v.applicationNotificationid+")'  ></span></td>";
+                    html += "</tr>"
+
+
+                });
+                html += "</tbody>";
+                $("#trNotification").empty().append(html);
+                $('#trNotification').DataTable();
+               
+            })
+        }
+        catch(e)
+        {
+            console.log(e)
+        }
+    }
+    function LoadLinkCondition(ID) {
+        try {
+            var url = "@Url.Action("LoadLinkConditionList")";
+            var html = "";
+            $.get(url, { ApplicationLevelId: ID }, function (data) {
+                console.log(data);
+
+                var html = "<thead><tr>";
+
+                    html +="<th>الرابط من </th>";
+                html += "<th> الرابط الي </th>";
+                html += " <th> القرار </th>";
+                html += "<th>الية القرار </th>";
+                html += "<th> </th>     </tr>  </thead>"
+                html += "<tbody>";
+                $.each(data, function (x, v) {
+                    html += "<tr>"
+
+                    html += "<td>" + v.fromName + "</td>";
+                    html += "<td>" + v.toName + "</td>";
+                    html += "<td>" + v.actionName + "</td>";
+                    html += "<td>" + v.actionTake + "</td>";
+                    html += "<td class='text-center'><span class='fa fa-trash ' style='color:#ff0000b3'  ></span></td>";
+                    html += "</tr>"
+
+
+                });
+                html += "</tbody>";
+                $("#trRelation").empty();
+                $("#trRelation").append(html);
+                $('#trRelation').DataTable();
+
+            })
+
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    function DeleteNotification(applicationNotificationid )
+    {
+        try { 
+            var ConfirmValue = ConfirmMS();
+            ConfirmValue.done(function (res) {
+                if (res) {
+
+                    console.log(applicationNotificationid)
+                }
+                else {
+                    console.log("not")
+                }
+            });
+          
+        }
+        catch(e)
+        {
+            console.log(e);
+        }
+    }
+    function GetLevelAssign(ID) {
+        try {
+            var url = "@Url.Action("GetLevelAssign")";
+           
+            $.get(url, { ApplicationLevelId: ID }, function (data) {
+                console.log(data);
+                var html = "<thead><tr>";
+
+
+               html +=  "<th>نوع الاسناد </th>";
+                html += "<th>المسند اليه </th>";
+                html += "<th> </th>     </tr>  </thead>"
+                html += "<tbody>";
+                $.each(data, function (x, v) {
+                    html += "<tr>"
+              
+                  
+                        html += "<td>" + v.assType + "</td>";
+
+                    html += "<td>" + v.assTo + "</td>";
+                   
+                
+              
+                    html += "<td class='text-center'><span class='fa fa-trash ' style='color:#ff0000b3'  ></span></td>";
+                    html += "</tr>"
+
+
+                });
+                html += "<tbody>";
+
+                $("#tbAssagin").empty();
+                $("#tbAssagin").append(html);
+                $('#tbAssagin').DataTable();
+            })
+
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    
+    function changeName(ID) {
+        const Application_Level_Name = $("#Application_Level_Name").val();
+        var TestNode = JSON.parse(sessionStorage.getItem("Form"));
+        var Node = TestNode.nodes;
+
+
+
+        const NodeValues = Node.find(x => x.id == ID);
+        if (NodeValues) {
+            NodeValues.text = Application_Level_Name; // Changing the TextData
+            console.log(NodeValues);
+        }
+        else {
+            NodeValues.text = Application_Level_Name;
+            console.log(NodeValues);
+        }
+
+        sessionStorage.setItem("Form", TestNode);
+
+        chart.load(TestNode)
+
+    }
+    function ChangeRelation(data) {
+        try {
+            console.log(data.id);
+            const numberBefore = getTwoNumbersBefore(data.id, ":");
+
+            var from = numberBefore[0];
+            var to = numberBefore[1];
+
+            data.remove();
+            var Node = JSON.parse(sessionStorage.getItem("Form"));
+            var NodeVal = Node.links.filter(x => x.from != from && x.to != to);
+            console.log(NodeVal);
+
+            Node.links = NodeVal;
+
+            console.log(Node.links);
+            sessionStorage.setItem("Form", JSON.stringify(Node));
+
+            chart.load(Node)
+
+
+        }
+        catch (ex) {
+            console.log(ex);
+        }
+    }
+    function LoadAssginType() {
+        try {
+            var AssginTypeId = $("#AssginType").val();
+            console.log(AssginTypeId);
+            if (AssginTypeId == 1) {
+                $("#Assigned_To_Emp_Id").attr("disabled", false);
+                $("#ManagerType_Id").attr("disabled", true);
+      
+                LoadSearchEmp();
+           
+            }
+            else if (AssginTypeId == 2) {
+                $("#Assigned_To_Emp_Id").attr("disabled", true);
+                $("#ManagerType_Id").attr("disabled", false);
+                LoadManagerTypeList();
+            }
+            else
+            {
+                $("#Assigned_To_Emp_Id").attr("disabled", true);
+                $("#ManagerType_Id").attr("disabled", true);
+
+            }
+
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    function LoadManagerTypeList()
+    {
+        try {
+            var url = "@Url.Action("ManagerTypeList")";
+            $.getJSON(url, function (data) { 
+            
+                console.log(data);
+                var html = ""
+                $.each(data, function (key, value) {
+                    console.log(value);
+
+                    html += "<option value=" + value.managerTypeId + ">" + value.managerTypeName + "  </option> ";
+
+
+                });
+                console.log(html);
+
+                $("#ManagerType_Id").empty()
+                    .append(html);
+            })
+        }
+        catch (e) { 
+            console.log(e);
+        }
+    }
+    
+    function LoadNotificationEmp() {
+
+        try {
+
+            var url = "@Url.Action("SearchEmp")";
+            var Assigned_To_Emp_Id = $("#NotificationEmp").val();
+            var SearchP = $("#NotificationEmp").text();
+            // if (Assigned_To_Emp_Id.length >= 3) {
+            $.getJSON(url, { SearchP: SearchP }, function (data) {
+
+                console.log(data);
+                var html = ""
+                $.each(data, function (key, value) {
+                    console.log(value);
+
+                    html += "<option value=" + value.employeeId + " >" + value.fullName + "  </option> ";
+
+
+                });
+
+                $("#NotificationEmp").empty().append(html);
+
+
+
+                $("#NotificationEmp").select2();
+          
+            })
+            // }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    function LoadSearchEmp()
+    {
+
+        try {
+            
+            var url = "@Url.Action("SearchEmp")";
+            var Assigned_To_Emp_Id = $("#Assigned_To_Emp_Id").val();
+            var SearchP = $("#Assigned_To_Emp_Id").text();
+            // if (Assigned_To_Emp_Id.length >= 3) {
+            $.getJSON(url, { SearchP: SearchP }, function (data) {
+
+                    console.log(data);
+                    var html = ""
+                    $.each(data, function (key, value) {
+                        console.log(value);
+
+                    html += "<option value=" + value.employeeId + " >" + value.fullName + "  </option> ";
+
+
+                    });
+            
+                $("#Assigned_To_Emp_Id").empty().append(html);
+                      
+            
+       
+                 $("#Assigned_To_Emp_Id").select2();
+              //  $('#Assigned_To_Emp_Id').selectpicker();
+                // $('#largeModal').('modal fade show', function () {
+            
+                // });
+                })
+            // }
+        }
+        catch (e) { 
+            console.log(e);
+        }
+    }
+    function getTwoNumbersBefore(str, char) {
+        // Regular expression to find two groups of digits before the specific character
+        const regex = new RegExp(`(\\d+)\\D+(\\d+)(?=${char})`);
+        const match = str.match(regex);
+
+        if (match) {
+            // Return both numbers as an array of integers
+            return [parseInt(match[1], 10), parseInt(match[2], 10)];
+        }
+
+        return null;
+    }
+    function LoadDecison(ID) {
+        try {
+
+            // LoadActionList();
+            console.clear();
+            console.log(ID)
+            var Nodes = JSON.parse(sessionStorage.getItem("Form"));
+            var linksVal = Nodes.links.filter(x => x.from == ID && x.totemplateId != "Notification" && x.totemplateId != "Escal");
+
+            var linksNotification = Nodes.links.filter(x => x.from == ID && x.totemplateId == "Notification");
+    
+            console.log(linksVal)
+            console.log(linksNotification)
+            var html = ""
+            $.each(linksVal, function (key, value) {
+                console.log(value);
+
+                html += "<option value='" + value.applictionLinkId + "' >" + value.toName + "  </option> ";
+
+
+            });
+            console.log(html);
+
+           $("#SLink").empty()
+                .append(html);
+
+            html = "";
+            $.each(linksNotification, function (key, value) {
+                console.log(value);
+
+                html += "<option value='" + value.applictionLinkId + "' >" + value.toName + "  </option> ";
+
+
+            });
+            $("#NotificationLinks").empty()
+                .append(html);
+        
+        }
+        catch (ex) {
+            console.log(ex)
+
+        }
+    }
+    function ActiveTabe(id) {
+        try {
+            var tab = document.querySelectorAll('.tab');
+            tab.forEach(item => {
+
+                // Remove 'current' class from any item that has it
+                item.classList.add('pending');
+                item.classList.remove('current');
+
+                // Add 'current' class to the clicked item
+                // item.querySelector('pending');
+
+            });
+            // document.getElementById("tab2").classList.add('current');
+            // document.getElementById(tab).classList.remove('pending');
+            // document.getElementById(tab).classList.add('current');
+
+            const element = document.getElementById(id);
+
+            // Check if the element exists before trying to modify its class
+            if (element) {
+                element.classList.add('current');
+            } else {
+                console.error(`Element with ID "${id}" not found.`);
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+    function SaveFormInfo() {
+        try {
+            console.clear();
+            const form = document.getElementById('FormInfo');
+
+            console.log(form);
+            if (form != null) {
+                const formData = new FormData(form);
+
+                // Convert FormData to an object
+                const formObject = {};
+
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+                var ID = formObject.NodeID;
+                console.log(ID);
+
+                if (ID != "") {
+                    // NodeVal['AppRequirements'] = formObject;
+
+                    // NodeVal.text = formObject.Application_Level_Name;
+                    NodeVal['AppRequirements'] = formObject;
+                    console.log(NodeVal);
+                }
+
+                console.log(NodeVal);
+                var Nodes = JSON.parse(sessionStorage.getItem("Form"));
+
+                console.clear()
+                var Node = Nodes.nodes;
+
+                var NodeVal = Node.find(x => x.id == ID);
+
+                chart.load(Nodes)
+
+                sessionStorage.setItem("Form", JSON.stringify(Nodes));
+                ActionPostForm(body);
+
+            }
+            else {
+
+                var Nodes = JSON.parse(sessionStorage.getItem("Form"));
+
+                sessionStorage.setItem("Form", JSON.stringify(Nodes));
+
+                chart.load(Nodes)
+
+                console.log(Nodes);
+
+                var body = JSON.stringify(Nodes);
+                ActionPostForm(body);
+            }
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    function ActionPostForm(body) {
+        try {
+            console.log(body);
+            var url = "@Url.Action("AddLevelRequirement")";
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json', // Make sure this is correctly set
+                data: body, // Ensure the data is a JSON string
+                success: function (response) {
+                    chart.load(response.value);
+                    console.log(response);
+                    LoadNodes();
+                    console.log('saved successfully!');
+                },
+                error: function (error) {
+                    console.log('Error saving flowchart: ' + error.responseText);
+                }
+            });
+
+        }
+        catch(e)
+        {
+            console.log(e);
+        }
+    }
+    function LoadActionList() {
+        try {
+            var url = "@Url.Action("ActionList")";
+            var html = "";
+            $.getJSON(url, function (data) {
+                // ActionList.push(data);
+
+                console.log(data);
+                $.each(data, function (x, v) {
+
+
+                    html += "<option value=" + v.actionId + ">" + v.actionNameArabic + "</option>";
+
+
+
+                });
+                $("#ActionList").empty();
+                $("#ActionList").append(html);
+
+
+                $("#NotificationActionId").empty();
+                $("#NotificationActionId").append(html);
+                
+
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    function AddCondition() { 
+        try { 
+        
+            
+            const form = document.getElementById('FormDecision');
+         
+            const formData = new FormData(form);
+            // Convert FormData to an object
+            const formObject = {};
+
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+
+            var body = JSON.stringify(formObject);
+         var ID=   $("#Application_Level_Id").val();
+            ///
+            var url = "@Url.Action("AddLinkCondation")";
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json', // Make sure this is correctly set
+                data: body, // Ensure the data is a JSON string
+                success: function (response) {
+                    chart.load(response.value);
+                    console.log(response);
+                    LoadNodes();
+                    LoadRequerment(ID);
+                    LoadLinkCondition(ID);
+                    console.log('saved successfully!');
+                },
+                error: function (error) {
+                    console.log('Error saving flowchart: ' + error.responseText);
+                }
+            });
+
+
+        }
+        catch (e) { 
+            console.log(e);
+        }
+    }
+    function AssignedAndAction() {
+
+
+        Array.prototype.search = function (elem) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] == elem) return i;
+            }
+
+            return -1;
+        };
+
+        var Multiselect = function (selector) {
+            if (!$(selector)) {
+                console.error("ERROR: Element %s does not exist.", selector);
+                return;
+            }
+
+            this.selector = selector;
+            this.selections = [];
+
+            (function (that) {
+                that.events();
+            })(this);
+        };
+
+        Multiselect.prototype = {
+            open: function (that) {
+                var target = $(that).parent().attr("data-target");
+
+                // If we are not keeping track of this one's entries, then
+                // start doing so.
+                if (!this.selections) {
+                    this.selections = [];
+                }
+
+                $(this.selector + ".multiselect").toggleClass("active");
+            },
+
+            close: function () {
+                $(this.selector + ".multiselect").removeClass("active");
+            },
+
+            events: function () {
+                var that = this;
+
+                $(document).on("click", that.selector + ".multiselect > .title", function (e) {
+                    if (e.target.className.indexOf("close-icon") < 0) {
+                        that.open();
+                    }
+                });
+
+                $(document).on("click", that.selector + ".multiselect option", function (e) {
+                    var selection = $(this).attr("value");
+                    var target = $(this).parent().parent().attr("data-target");
+
+                    var io = that.selections.search(selection);
+
+                    if (io < 0) that.selections.push(selection);
+                    else that.selections.splice(io, 1);
+
+                    that.selectionStatus();
+                    that.setSelectionsString();
+                });
+
+                $(document).on("click", that.selector + ".multiselect > .title > .close-icon", function (e) {
+                    that.clearSelections();
+                });
+
+                $(document).click(function (e) {
+                    if (e.target.className.indexOf("title") < 0) {
+                        if (e.target.className.indexOf("text") < 0) {
+                            if (e.target.className.indexOf("-icon") < 0) {
+                                if (e.target.className.indexOf("selected") < 0 ||
+                                    e.target.localName != "option") {
+                                    that.close();
+                                }
+                            }
+                        }
+                    }
+                });
+            },
+
+            selectionStatus: function () {
+                var obj = $(this.selector + ".multiselect");
+
+                if (this.selections.length) obj.addClass("selection");
+                else obj.removeClass("selection");
+            },
+
+            clearSelections: function () {
+                this.selections = [];
+                this.selectionStatus();
+                this.setSelectionsString();
+            },
+
+            getSelections: function () {
+                return this.selections;
+            },
+
+            setSelectionsString: function () {
+                var selects = this.getSelectionsString().split(", ");
+                $(this.selector + ".multiselect > .title").attr("title", selects);
+
+                var opts = $(this.selector + ".multiselect option");
+
+                if (selects.length > 6) {
+                    var _selects = this.getSelectionsString().split(", ");
+                    _selects = _selects.splice(0, 6);
+                    $(this.selector + ".multiselect > .title > .text")
+                        .text(_selects + " [...]");
+                }
+                else {
+                    $(this.selector + ".multiselect > .title > .text")
+                        .text(selects);
+                }
+
+                for (var i = 0; i < opts.length; i++) {
+                    $(opts[i]).removeClass("selected");
+                }
+
+                for (var j = 0; j < selects.length; j++) {
+                    var select = selects[j];
+
+                    for (var i = 0; i < opts.length; i++) {
+                        if ($(opts[i]).attr("value") == select) {
+                            $(opts[i]).addClass("selected");
+                            break;
+                        }
+                    }
+                }
+            },
+
+            getSelectionsString: function () {
+                if (this.selections.length > 0)
+                    return this.selections.join(", ");
+                else return "Select";
+            },
+
+            setSelections: function (arr) {
+                if (!arr[0]) {
+                    error("ERROR: This does not look like an array.");
+                    return;
+                }
+
+                this.selections = arr;
+                this.selectionStatus();
+                this.setSelectionsString();
+            },
+        };
+
+        $(document).ready(function () {
+            var multi = new Multiselect("#countries");
+        });
+
+
+    }
+
+</script>
+
+
+
+<script>
+    $('INPUT[type="file"]').change(function () {
+
+        if (typeof ($("file")[0].files) != "undefined") {
+            var size = parseFloat($("#fileUpload")[0].files[0].size / 1024).toFixed(2);
+            alert(size + " KB.");
+        } else {
+            alert("This browser does not support HTML5.");
+        }
+
+        var ext = this.value.match(/\.(.+)$/)[1];
+        switch (ext) {
+            case 'jpg':
+            case 'JPG':
+            case 'PDF':
+            case 'pdf':
+
+
+                break;
+            default:
+                Swal.fire("warning!", "This is not an allowed file type.", "error")
+
+                this.value = '';
+        }
+    });
+</script>
+<script type="text/javascript">
+
+    $("#LeaveDays").keyup(function () {
+        try {
+
+            var LeaveDaysBalance = $("#LeaveDaysBalance").val();
+
+            var SetDays = parseInt($('#LeaveDays').val(), 10);
+
+
+            if (SetDays > LeaveDaysBalance) {
+
+                Swal.fire("warning!", "you can't request for more than your leave balance .please contact your  Direct Manager !", "error");
+                $("#LeaveDays").val("");
+
+            }
+            else {
+
+            }
+        }
+        catch (e) {
+            alert(e)
+        }
+
+    });
+    $(document).ready(function () {
+
+        $('.Ssearch').select2({
+            placeholder: "Select",
+
+        });
+                LoadNotificationEmp();
+    });
+</script>
+<script>
+
+    function Fndate() {
+        var Fdate = document.getElementById('Fdate').value;
+        var Tdate = document.getElementById('Tdate').value;
+        var date1 = new Date(Fdate);
+        var date2 = new Date(Tdate);
+        if (date2 >= date1) {
+            // To calculate the time difference of two dates
+            var Difference_In_Time = date2.getTime() - date1.getTime();
+
+            // To calculate the no. of days between two dates
+            var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+            $("#LeaveDays").empty();
+            document.getElementById("LeaveDays").value = Difference_In_Days + 1;
+            var LeaveDaysBalance = $("#LeaveDaysBalance").val();
+
+            var SetDays = parseInt($('#LeaveDays').val(), 10);
+
+
+            if (SetDays > LeaveDaysBalance) {
+
+                Swal.fire("warning!", "you can't request for more than your leave balance .please contact your  Direct Manager !", "error");
+                $("#LeaveDays").val("");
+
+            }
+        } else {
+
+
+            Swal.fire("warning!", "please select date correctly!", "error");
+
+            document.getElementById('Fdate').value = "";
+            document.getElementById('Tdate').value = "";
+        }
+
+
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const target = tab.getAttribute('data-tab');
+
+                contents.forEach(content => {
+                    if (content.id === target) {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+
+</script>
+<script>
+    $.mobile.document
+        // "filter-menu-menu" is the ID generated for the listview when it is created
+        // by the custom selectmenu plugin. Upon creation of the listview widget we
+        // want to prepend an input field to the list to be used for a filter.
+        .on("listviewcreate", "#filter-menu-menu", function (e) {
+            var input,
+                listbox = $("#filter-menu-listbox"),
+                form = listbox.jqmData("filter-form"),
+                listview = $(e.target);
+            // We store the generated form in a variable attached to the popup so we
+            // avoid creating a second form/input field when the listview is
+            // destroyed/rebuilt during a refresh.
+            if (!form) {
+                input = $("<input data-type='search'></input>");
+                form = $("<form></form>").append(input);
+                input.textinput();
+                $("#filter-menu-listbox")
+                    .prepend(form)
+                    .jqmData("filter-form", form);
+            }
+            // Instantiate a filterable widget on the newly created listview and
+            // indicate that the generated input is to be used for the filtering.
+            listview.filterable({ input: input });
+        })
+        // The custom select list may show up as either a popup or a dialog,
+        // depending how much vertical room there is on the screen. If it shows up
+        // as a dialog, then the form containing the filter input field must be
+        // transferred to the dialog so that the user can continue to use it for
+        // filtering list items.
+        //
+        // After the dialog is closed, the form containing the filter input is
+        // transferred back into the popup.
+        .on("pagebeforeshow pagehide", "#filter-menu-dialog", function (e) {
+            var form = $("#filter-menu-listbox").jqmData("filter-form"),
+                placeInDialog = (e.type === "pagebeforeshow"),
+                destination = placeInDialog ? $(e.target).find(".ui-content") : $("#filter-menu-listbox");
+            form
+                .find("input")
+                // Turn off the "inset" option when the filter input is inside a dialog
+                // and turn it back on when it is placed back inside the popup, because
+                // it looks better that way.
+                .textinput("option", "inset", !placeInDialog)
+                .end()
+                .prependTo(destination);
+        });
+</script>

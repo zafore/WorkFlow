@@ -1,0 +1,178 @@
+@model WorkFlow.Models.Application
+
+@{
+    ViewData["Title"] = "تعديل التطبيق";
+}
+
+<div class="container py-4">
+    <div class="card-modern p-4">
+        <h2 class="mb-4 text-primary-emphasis">
+            <i class="fas fa-edit me-2"></i>
+            تعديل التطبيق: @Model.ApplicationNameAr
+        </h2>
+        <hr class="mb-4" />
+
+        <form asp-action="Edit" method="post">
+            <input asp-for="ApplicationId" type="hidden" />
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="ApplicationNameEng" class="form-label">اسم التطبيق (الإنجليزية)</label>
+                    <input asp-for="ApplicationNameEng" class="form-control" required />
+                    <span asp-validation-for="ApplicationNameEng" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ApplicationNameAr" class="form-label">اسم التطبيق (العربية)</label>
+                    <input asp-for="ApplicationNameAr" class="form-control" required />
+                    <span asp-validation-for="ApplicationNameAr" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label asp-for="SystemInfoId" class="form-label">نظام المعلومات</label>
+                    <select asp-for="SystemInfoId" class="form-select" asp-items="ViewBag.SystemInfoId" required>
+                        <option value="">-- اختر نظام المعلومات --</option>
+                    </select>
+                    <span asp-validation-for="SystemInfoId" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="DepartmentId" class="form-label">القسم</label>
+                    <select asp-for="DepartmentId" class="form-select" asp-items="ViewBag.DepartmentId" required>
+                        <option value="">-- اختر القسم --</option>
+                    </select>
+                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="SectionId" class="form-label">الفرع</label>
+                    <select asp-for="SectionId" class="form-select" asp-items="ViewBag.SectionId">
+                        <option value="">-- اختر الفرع (اختياري) --</option>
+                    </select>
+                    <span asp-validation-for="SectionId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input asp-for="ApplicationInUse" class="form-check-input" type="checkbox" />
+                        <label asp-for="ApplicationInUse" class="form-check-label">
+                            التطبيق نشط
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-secondary-modern btn-modern">
+                    <i class="fas fa-arrow-right me-2"></i>
+                    العودة للقائمة
+                </a>
+                <div>
+                    <button type="submit" class="btn btn-primary-modern btn-modern me-2">
+                        <i class="fas fa-save me-2"></i>
+                        حفظ التغييرات
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.ApplicationId" class="btn btn-info-modern btn-modern">
+                        <i class="fas fa-eye me-2"></i>
+                        عرض التفاصيل
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- معلومات إضافية -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card-modern p-3">
+                <h5 class="text-primary-emphasis mb-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    معلومات التطبيق
+                </h5>
+                <div class="info-item">
+                    <strong>تاريخ الإنشاء:</strong> @Model.CrDate.ToString("yyyy-MM-dd")
+                </div>
+                <div class="info-item">
+                    <strong>منشئ التطبيق:</strong> @Model.CrEmpId
+                </div>
+                @if (Model.UpDate.HasValue)
+                {
+                    <div class="info-item">
+                        <strong>آخر تحديث:</strong> @Model.UpDate.Value.ToString("yyyy-MM-dd")
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-modern p-3">
+                <h5 class="text-primary-emphasis mb-3">
+                    <i class="fas fa-cogs me-2"></i>
+                    إجراءات سريعة
+                </h5>
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("ApplicationLevelDetails", new { id = Model.ApplicationId })" class="btn btn-success-modern btn-modern">
+                        <i class="fas fa-project-diagram me-2"></i>
+                        إدارة سير العمل
+                    </a>
+                    <a href="@Url.Action("Index", "Requests", new { applicationId = Model.ApplicationId })" class="btn btn-warning-modern btn-modern">
+                        <i class="fas fa-list me-2"></i>
+                        عرض الطلبات
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-item {
+        margin-bottom: 0.5rem;
+        padding: 0.25rem 0;
+    }
+    
+    .info-item strong {
+        color: var(--primary-color);
+        margin-left: 0.5rem;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            // Initialize Select2 for dropdowns
+            $('#SystemInfoId, #DepartmentId, #SectionId').select2({
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                allowClear: true,
+            });
+
+            // Dynamic loading of sections based on department selection
+            $('#DepartmentId').change(function () {
+                var departmentId = $(this).val();
+                if (departmentId) {
+                    $.ajax({
+                        url: '@Url.Action("GetSeactionByDep", "Applications")',
+                        type: 'GET',
+                        data: { DepartmentId: departmentId },
+                        success: function (data) {
+                            $('#SectionId').empty().append('<option value="">-- اختر الفرع (اختياري) --</option>');
+                            $.each(data, function (index, section) {
+                                $('#SectionId').append('<option value="' + section.sectionId + '">' + section.sectionNameEng + '</option>');
+                            });
+                            $('#SectionId').trigger('change');
+                        },
+                        error: function () {
+                            Swal.fire('خطأ', 'حدث خطأ أثناء تحميل الفروع.', 'error');
+                        }
+                    });
+                } else {
+                    $('#SectionId').empty().append('<option value="">-- اختر الفرع (اختياري) --</option>');
+                    $('#SectionId').trigger('change');
+                }
+            });
+        });
+    </script>
+}

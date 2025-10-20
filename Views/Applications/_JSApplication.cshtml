@@ -1,0 +1,186 @@
+﻿
+
+    <script>
+
+        try {
+            $(document).ready(function () {
+
+            $('#DepartmentId').select2({
+                placeholder: "--Select--",
+            });
+
+                $('#DepartmentId').change(function () {
+                    var DepID = $('#DepartmentId').val();
+                    var url = "@Url.Action("GetSeactionByDep")";
+                    $("#SectionId").empty();
+                var html = "<option  value=0>--Select--</option>";
+                $.getJSON(url, { DepartmentId: DepID }, function (data) {
+             ///Add Data To List
+                        var $select = document.getElementById('SectionId');
+                
+                        $.each(data, function (x, v) {
+                        html = "<option value=" + v.SectionId + ">" + v.sectionNameEng + "</option>";
+                        });
+              
+                        $("#SectionId").append(html);
+
+              ////End
+
+                    });
+                });
+            });
+        }
+        catch(e)
+        {
+            console.log(e);
+
+        }
+
+///FormRequerment Post
+        try {
+        $("#FormRequrment").submit(function (e) {
+            e.preventDefault();
+            var FormData = $(this).serialize();
+            console.clear();
+            console.log(FormData);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddAppRequirementDirect")",
+                data: FormData,
+                success: function (response) {
+                    console.log(response.data)
+
+                    LoadRequerment(response.data.applicationLevelId);
+                    if (response.success) {
+                        Success();
+                        ResetForm("#FormRequrment")
+                        // $("#result").html('<div class="alert alert-success">' + response.message + '</div>');
+                    } else {
+                        error();
+                        // $("#result").html('<div class="alert alert-danger">' + response.message + '</div>');
+                    }
+                },
+                error: function () {
+                    error();
+                    // $("#result").html('<div class="alert alert-danger">There was an error submitting the form.</div>');
+                }
+            });
+        });
+
+        }
+        catch (e) { 
+            console.log(e);
+        }
+
+    ///End FormRequerment Post
+
+    /// FormNotification
+
+    try {
+        $("#FormNotification").submit(function (e) {
+            e.preventDefault();
+            var FormData = $(this).serialize();
+            console.clear();
+            console.log(FormData);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("ApplicationNotification")",
+                data: FormData,
+                success: function (response) {
+                    console.log(response.data);
+                    GetApplicationNotification(response.data[0].applicationLevelId);
+                    if (response.success) {
+                        Success();
+                        ResetForm("#FormNotification")
+
+                    } else {
+                        error();
+                       
+                    }
+                },
+                error: function () {
+                    error();
+                    
+                }
+            });
+        });
+
+    }
+    catch (e) {
+        console.log(e);
+    }
+
+    ///End  FormNotification
+
+
+    /// productForm
+
+    try {
+        $("#productForm").submit(function (e) {
+            e.preventDefault();
+            var FormData = $(this).serialize();
+            console.clear();
+            console.log(FormData);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("create")",
+                data: FormData,
+                success: function (response) {
+                 
+                    if (response.success) {
+                        Success();
+                        ResetForm("#productForm")
+
+                    } else {
+                        error();
+
+                    }
+                },
+                error: function () {
+                    error();
+
+                }
+            });
+        });
+
+    }
+    catch (e) {
+        console.log(e);
+    }
+
+
+    /// End productForm
+
+    function ResetForm(FormID)
+    {
+ 
+        $(FormID).each(function () {
+            this.reset();
+        });
+    }
+     
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     const form = document.getElementById('productForm');
+
+        //     form.addEventListener('submit', function (event) {
+        //         event.preventDefault(); // Prevent the default form submission
+
+        //         const formData = new FormData(form); // Create a FormData object from the form
+
+        //                 fetch('@Url.Action("Create", "Applications")', {
+        //             method: 'POST',
+        //             body: formData
+        //         })
+        //         .then(response => response.text()) // Get the response as text (HTML)
+        //         .then(html => {
+        //             document.getElementById('productDetails').innerHTML = html; // Update the target element
+        //         })
+        //         .catch(error => {
+        //             document.getElementById('productDetails').innerHTML = `<p>An error occurred: ${error}</p>`;
+        //         });
+        //     });
+        // });
+</script>

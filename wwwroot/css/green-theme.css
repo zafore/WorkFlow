@@ -1,0 +1,309 @@
+/* تحسينات إضافية لدرجات الأخضر */
+
+/* تأثيرات إضافية للكروت */
+.card-modern {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    border-radius: 20px;
+    box-shadow: 
+        0 10px 25px -5px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(16, 185, 129, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-modern:hover::before {
+    opacity: 1;
+}
+
+.card-modern:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(16, 185, 129, 0.1);
+}
+
+/* تحسينات للأزرار */
+.btn-modern {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 14px 28px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    text-transform: none;
+    letter-spacing: 0.5px;
+}
+
+.btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-modern:hover::before {
+    left: 100%;
+}
+
+.btn-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.2);
+}
+
+.btn-modern:active {
+    transform: translateY(-1px);
+}
+
+/* تحسينات للتنقل */
+.navbar-custom {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 0 4px;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.nav-link:hover::after {
+    width: 80%;
+}
+
+/* تحسينات للجداول */
+.table-modern {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.table-modern thead th {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    font-weight: 600;
+    padding: 20px 16px;
+    text-align: center;
+    position: relative;
+}
+
+.table-modern thead th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.table-modern tbody td {
+    padding: 16px;
+    border-color: rgba(16, 185, 129, 0.1);
+    transition: all 0.3s ease;
+}
+
+.table-modern tbody tr {
+    transition: all 0.3s ease;
+}
+
+.table-modern tbody tr:hover {
+    background: rgba(16, 185, 129, 0.08);
+    transform: scale(1.01);
+}
+
+/* تحسينات للنماذج */
+.form-control, .form-select {
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+    background: white;
+    transform: translateY(-1px);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 8px;
+}
+
+/* تحسينات للتنبيهات */
+.alert {
+    border: none;
+    border-radius: 12px;
+    padding: 16px 20px;
+    backdrop-filter: blur(10px);
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    border-left-color: var(--success-color);
+    color: var(--green-800);
+}
+
+.alert-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-left-color: var(--danger-color);
+    color: #7f1d1d;
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-left-color: var(--warning-color);
+    color: #78350f;
+}
+
+.alert-info {
+    background: rgba(6, 182, 212, 0.1);
+    border-left-color: var(--info-color);
+    color: #0c4a6e;
+}
+
+/* تأثيرات متحركة */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* تطبيق الحركات */
+.card-modern {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.nav-link {
+    animation: fadeInLeft 0.6s ease-out;
+}
+
+.btn-modern {
+    animation: fadeInRight 0.6s ease-out;
+}
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .card-modern {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-modern {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .table-modern {
+        font-size: 0.9rem;
+    }
+    
+    .table-modern thead th,
+    .table-modern tbody td {
+        padding: 12px 8px;
+    }
+}
+
+/* تأثيرات إضافية للتفاعل */
+.btn-modern:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+.form-control:focus,
+.form-select:focus {
+    outline: none;
+}
+
+/* تحسينات للخطوط */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--dark-color);
+    font-weight: 700;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-success {
+    color: var(--success-color) !important;
+}
+
+/* تأثيرات الظلال المحسنة */
+.shadow-green {
+    box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2);
+}
+
+.shadow-green-lg {
+    box-shadow: 0 20px 40px -10px rgba(16, 185, 129, 0.3);
+}

@@ -1,0 +1,99 @@
+﻿
+<script>
+
+    function AddRequirementData(Application_Requirement_Id,DivHide,DivShow) {
+        try {
+            StartLoader();
+
+            var Url = '@Url.Action("Create", "Application_Requirement_Details")';
+            var DataReslt = $.get(Url, { Application_Requirement_Id });
+            DataReslt.done(function (data) {
+
+                ShowHide(DivHide, DivShow);
+                $("#" + DivShow).empty();
+                $("#" + DivShow).append(data);
+                EndLoader();
+            });
+
+        }
+        catch (ex) {
+            EndLoader();
+            alert(ex);
+
+        }
+    }
+
+    function AddRequirementDataFormaster(Application_Requirement_Id, DivHide, DivShow) {
+        try {
+            StartLoader();
+
+            var Url = '@Url.Action("CreateForMaster", "Application_Requirement_Details")';
+            var DataReslt = $.get(Url, { Application_Requirement_Id });
+            DataReslt.done(function (data) {
+
+                ShowHide(DivHide, DivShow);
+                $("#" + DivShow).empty();
+                $("#" + DivShow).append(data);
+                EndLoader();
+            });
+
+        }
+        catch (ex) {
+            EndLoader();
+            alert(ex);
+
+        }
+    }
+    
+    function DeleteRequirement_Details(id, DivShow) {
+        try {
+
+            StartLoader();
+
+            var Url = '@Url.Action("DeleteConfirmed", "Application_Requirement_Details")';
+            var DataReslt = $.get(Url, { id });
+            DataReslt.done(function (data) {
+
+
+                $("#" + DivShow).empty();
+                $("#" + DivShow).append(data);
+                EndLoader();
+            });
+        }
+        catch (ex) {
+            EndLoader();
+            alert(ex);
+        }
+    }
+    function DeleteConfirmedForMaster(id, DivShow) {
+        try {
+
+            StartLoader();
+
+            var Url = '@Url.Action("DeleteConfirmedForMaster", "Application_Requirement_Details")';
+            var DataReslt = $.get(Url, { id });
+            DataReslt.done(function (data) {
+
+
+                $("#" + DivShow).empty();
+                $("#" + DivShow).append(data);
+                EndLoader();
+            });
+        }
+        catch (ex) {
+            EndLoader();
+            alert(ex);
+        }
+    }
+    function Change_ApplicationRequerment(Application_Requirement_Id) {
+        var url = '@Url.Action("Requirment_Satus", "Applications")';
+        $.getJSON(url ,{ Application_Requirement_Id:Application_Requirement_Id},function(Data){
+       
+
+            location.reload();
+        });
+
+
+    }
+
+</script>
