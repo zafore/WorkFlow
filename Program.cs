@@ -26,9 +26,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 
-// ����� ����� ������� �������� ��������� (IV)
-var key = "xBk7xN7S2b-xJDyGIqiWzHtihEsm0eWZILnmTl4I4qY";
-var iv = "abed9bd622361278a9e9f652876d9bc5";
+// استخدام متغيرات البيئة لمفاتيح التشفير
+var key = builder.Configuration["Encryption:Key"] ?? throw new InvalidOperationException("Encryption key not found");
+var iv = builder.Configuration["Encryption:IV"] ?? throw new InvalidOperationException("Encryption IV not found");
 
 //// ����� ���� �������
 //builder.Services.AddSingleton(new EncryptionService(key, iv));
@@ -55,7 +55,15 @@ builder.Services.AddDbContext<Workflow2Context>(options => options.UseSqlServer(
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Removed ASP.NET Core Identity to use custom authentication
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // إضافة CSRF Protection
+    options.Filters.Add<Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute>();
+});
+
+// إضافة Rate Limiting (متوافق مع .NET 7)
+builder.Services.AddMemoryCache();
+
 builder.Services.AddRazorPages();
 
 var app = builder.Build();

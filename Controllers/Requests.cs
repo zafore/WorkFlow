@@ -82,11 +82,11 @@ namespace WorkFlow.Controllers
                 InStart = x.InStart,
                 SharedTableId = x.SharedTableId,
                 SharedTable = x.SharedTable,
-                ApplicationProcuderDetails = x.ApplicationProcuderDetails,
-                ApplicationRequirementDetail = x.ApplicationRequirementDetails,
+                ApplicationProcuderDetails = null,
+                ApplicationRequirementDetail = null,
                 ArchivesMasterId = x.ArchivesMasterId,
                 ArchivesMasters = x.ArchivesMaster,
-                DisplayLink = x.Displaylink,
+                DisplayLink = null,
                 //Employe
                 //RequestDetailsAttachs = x.RequestDetailsAttaches.ToList()
 

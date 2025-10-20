@@ -242,11 +242,11 @@ namespace WorkFlow.Controllers
         [HttpGet("SearchEmp")]
         public async Task<IActionResult> SearchEmp(string SearchP)
         {
-            // var result = db.FnSearchEmps.FromSqlRaw($"execute PRSearchEmp @SearchP= 'z'").ToList();
-         
-            var result = _context.FnEmps.FromSqlRaw($"select * from FnSearchEmp('{SearchP}') ").ToList();
+            // استخدام Parameterized Query لمنع SQL Injection
+            var result = await _context.FnEmps
+                .FromSqlRaw("SELECT * FROM FnSearchEmp({0})", SearchP)
+                .ToListAsync();
             return Ok(result);
-
         }
         [HttpGet]
         // GET: Applications/Create
