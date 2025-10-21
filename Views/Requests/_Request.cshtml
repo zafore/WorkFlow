@@ -62,14 +62,59 @@
     function PostNewRequest() {
         try {
             if ($("#FormPostNewRequest").valid()) {
-                console.log('valed')
+                console.log('Form is valid, submitting...');
+                
+                // جمع البيانات من النموذج
+                var formData = new FormData();
+                var applicationId = $("#ApplicationId").val();
+                var applicationLevelId = $("#ApplicationLevelId").val();
+                
+                // جمع بيانات النموذج
+                $("#FormPostNewRequest input, #FormPostNewRequest select, #FormPostNewRequest textarea").each(function() {
+                    if ($(this).attr('type') === 'file') {
+                        // التعامل مع الملفات
+                        var files = this.files;
+                        for (var i = 0; i < files.length; i++) {
+                            formData.append('files', files[i]);
+                        }
+                    } else if ($(this).attr('name') && $(this).attr('name') !== 'ApplicationId' && $(this).attr('name') !== 'ApplicationLevelId') {
+                        formData.append($(this).attr('name'), $(this).val());
+                    }
+                });
+                
+                formData.append('ApplicationId', applicationId);
+                formData.append('ApplicationLevelId', applicationLevelId);
+                
+                // إرسال البيانات
+                $.ajax({
+                    url: '@Url.Action("RequestPostNoCSRF", "Requests")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log('Success response:', response);
+                        if (response.success) {
+                            alert('تم إرسال الطلب بنجاح!');
+                            window.location.href = '@Url.Action("Index", "Requests")';
+                        } else {
+                            alert('خطأ: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error response:', xhr.responseText);
+                        alert('حدث خطأ أثناء إرسال الطلب: ' + error);
+                    }
+                });
             }
             else { 
-         console.log('dd')
+                console.log('Form validation failed');
+                alert('يرجى ملء جميع الحقول المطلوبة');
             }
         }
         catch (e) {
             console.log(e);
+            alert('حدث خطأ: ' + e.message);
         }
     }
 </script>

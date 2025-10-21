@@ -4,6 +4,9 @@
 
 @Html.AntiForgeryToken()
 
+<!-- CSRF Token Meta Tag -->
+<meta name="csrf-token" content="@Html.AntiForgeryToken().ToString()" />
+
 <!-- Page Header -->
 <div class="page-header mb-4">
     <div class="row align-items-center">
