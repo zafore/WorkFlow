@@ -5,8 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using WorkFlow.Data;
 using WorkFlow.Models;
 using WorkFlow.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// إعدادات الترميز العربي
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+Console.OutputEncoding = Encoding.UTF8;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -45,6 +50,9 @@ builder.Services.AddDbContext<Workflow2Context>(options => options.UseSqlServer(
         maxRetryCount: 3,       // Maximum number of retry attempts
         maxRetryDelay: TimeSpan.FromSeconds(30), // Maximum delay between retries
         errorNumbersToAdd: null); // Specific error numbers to retry on (null retries on all transient errors)
+    
+    // إعدادات الترميز العربي
+    serverOptions.CommandTimeout(30);
 }));
 //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 //builder.Services.AddDbContext<WorkFlow2Context>(options =>

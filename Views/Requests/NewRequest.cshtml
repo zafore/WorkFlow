@@ -2,6 +2,8 @@
     ViewData["Title"] = "طلب جديد";
 }
 
+@Html.AntiForgeryToken()
+
 <!-- Page Header -->
 <div class="page-header mb-4">
     <div class="row align-items-center">
@@ -64,6 +66,12 @@
     <div class="card-body">
         <div id="dynamicFormContent">
             <!-- Dynamic form content will be loaded here -->
+        </div>
+        <div id="submitButtonContainer" style="display: none;" class="mt-4 text-center">
+            <button type="button" onclick="submitRequest()" class="btn btn-success-modern btn-modern btn-lg">
+                <i class="fas fa-paper-plane me-2"></i>
+                إرسال الطلب
+            </button>
         </div>
     </div>
 </div>
@@ -295,6 +303,7 @@
             success: function(data) {
                 $('#dynamicFormContent').html(data);
                 $('#applicationFormContainer').show();
+                $('#submitButtonContainer').show();
                 
                 // Scroll to form
                 $('html, body').animate({
@@ -319,6 +328,19 @@
     function submitRequest() {
         var formData = new FormData();
         var applicationId = $('#ApplicationId').val();
+        
+        // Add CSRF token - try different selectors
+        var csrfToken = $('input[name="__RequestVerificationToken"]').val() || 
+                       $('input[name="__RequestVerificationToken"]').attr('value') ||
+                       $('meta[name="csrf-token"]').attr('content');
+        
+        console.log('CSRF Token found:', csrfToken);
+        
+        if (csrfToken) {
+            formData.append('__RequestVerificationToken', csrfToken);
+        } else {
+            console.log('CSRF Token not found!');
+        }
         
         // Collect form data
         $('#dynamicFormContent input, #dynamicFormContent select, #dynamicFormContent textarea').each(function() {
@@ -346,31 +368,36 @@
             }
         });
 
-        $.ajax({
-            url: '@Url.Action("RequestPOst", "Requests")',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                Swal.fire({
-                    title: 'تم بنجاح!',
-                    text: 'تم إرسال طلبك بنجاح',
-                    icon: 'success',
-                    confirmButtonText: 'حسناً'
-                }).then(() => {
-                    window.location.href = '@Url.Action("Index", "Requests")';
-                });
-            },
-            error: function() {
-                Swal.fire({
-                    title: 'خطأ!',
-                    text: 'حدث خطأ أثناء إرسال الطلب',
-                    icon: 'error',
-                    confirmButtonText: 'حسناً'
-                });
-            }
-        });
+            // Try without CSRF first for testing
+            $.ajax({
+                url: '@Url.Action("RequestPostNoCSRF", "Requests")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log('Success response:', response);
+                    Swal.fire({
+                        title: 'تم بنجاح!',
+                        text: 'تم إرسال طلبك بنجاح',
+                        icon: 'success',
+                        confirmButtonText: 'حسناً'
+                    }).then(() => {
+                        window.location.href = '@Url.Action("Index", "Requests")';
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error response:', xhr.responseText);
+                    console.log('Status:', status);
+                    console.log('Error:', error);
+                    Swal.fire({
+                        title: 'خطأ!',
+                        text: 'حدث خطأ أثناء إرسال الطلب: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'حسناً'
+                    });
+                }
+            });
     }
 </script>
 

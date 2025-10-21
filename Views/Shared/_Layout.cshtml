@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="language" content="ar" />
+    <meta name="csrf-token" content="@Html.AntiForgeryToken()" />
     <title>@ViewData["Title"] - نظام إدارة سير العمل</title>
     
     <!-- Bootstrap 5 RTL -->
@@ -442,6 +445,7 @@
     <!-- Site Scripts -->
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/modern-ui.js" asp-append-version="true"></script>
+    <script src="~/js/arabic-encoding.js" asp-append-version="true"></script>
     
     <!-- Help Partial -->
     @Html.Partial("_Help")
