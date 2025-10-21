@@ -149,13 +149,13 @@ namespace WorkFlow.Controllers
                 //int applicationLevelId = firstLevel.ApplicationLevelId;
 
                 // إنشاء طلب جديد
-                Request newRequest = new Request();
-                newRequest.ApplicationId = applicationId;
-                newRequest.IsComplate = false;
-                newRequest.IsEnd = false;
-                newRequest.RequestDate = DateTime.Now;
-                newRequest.RequestStatusId = 2; // حالة جديدة
-                newRequest.AssignedFromEmpId = currentUserId;
+                //Request newRequest = new Request();
+                //newRequest.ApplicationId = applicationId;
+                //newRequest.IsComplate = false;
+                //newRequest.IsEnd = false;
+                //newRequest.RequestDate = DateTime.Now;
+                //newRequest.RequestStatusId = 2; // حالة جديدة
+                //newRequest.AssignedFromEmpId = currentUserId;
                 
                 db.Requests.Add(newRequest);
             db.SaveChanges();
