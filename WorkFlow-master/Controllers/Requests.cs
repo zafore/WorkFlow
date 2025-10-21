@@ -95,32 +95,138 @@ namespace WorkFlow.Controllers
             ViewBag.ApplicationLevelId = FirstLevel.ApplicationLevelId;
             return PartialView(model);
         }
-
+        public class RequestPostModel
+        {
+            // Use the exact names (case-insensitive) as your form inputs
+            public int? ApplicationId { get; set; }
+            public int? ApplicationLevelId { get; set; }
+            public int? AssignedFromEmpId { get; set; }
+            public int? AssignedToEmp_Id { get; set; }
+            // Ensure this matches the form element's 'name' attribute
+        }
+        [HttpPost]
+        public ActionResult RequestPOstTest([FromForm] RequestPostModel RequestPostModel)
+        {
+            return Ok();
+        }
 
 
         [HttpPost]
-        public ActionResult RequestPostNoCSRF(IFormCollection form)
+        public ActionResult RequestPOst(List<FormPost> collection, int ApplicationId ,int ApplicationLevelId, int? AssignedFromEmpId, int? AssignedToEmp_Id)
         {
             try
             {
-                // تسجيل مفصل للبيانات المرسلة
-                System.Diagnostics.Debug.WriteLine("=== Form Data Debug ===");
-                System.Diagnostics.Debug.WriteLine("Form Keys Count: " + form.Keys.Count);
+                // Debug: Log form data
+                System.Diagnostics.Debug.WriteLine("Form keys: " + string.Join(", ", form.Keys));
+                System.Diagnostics.Debug.WriteLine("ApplicationId: " + form["ApplicationId"]);
+                
+            // الحصول على معلومات المستخدم الحالي
+            int currentUserId = GetCurrentUserId();
+            string currentUserName = GetCurrentUserName();
+            string currentUserFullName = GetCurrentUserFullName();
+
+            if (currentUserId == 0)
+            {
+                    return Json(new { success = false, message = "يجب تسجيل الدخول أولاً" });
+                }
+
+                // الحصول على ApplicationId من النموذج
+                //if (!int.TryParse(form["ApplicationId"], out int applicationId))
+                //{
+                //    return Json(new { success = false, message = "معرف التطبيق غير صحيح" });
+                //}
+                
+                // الحصول على المستوى الأول للتطبيق
+                var firstLevel = db.ApplicationLevels
+                    .Where(x => x.ApplicationId == applicationId && x.ApplicationLevelInUse == true && x.TemplateId == "start")
+                    .FirstOrDefault();
+                
+                if (firstLevel == null)
+                {
+                    return Json(new { success = false, message = "لم يتم العثور على المستوى الأول للتطبيق" });
+                }
+
+                int applicationLevelId = firstLevel.ApplicationLevelId;
+
+                // إنشاء طلب جديد
+                Request newRequest = new Request();
+                newRequest.ApplicationId = applicationId;
+                newRequest.IsComplate = false;
+                newRequest.IsEnd = false;
+                newRequest.RequestDate = DateTime.Now;
+                newRequest.RequestStatusId = 2; // حالة جديدة
+                newRequest.AssignedFromEmpId = currentUserId;
+                
+                db.Requests.Add(newRequest);
+            db.SaveChanges();
+
+                int requestId = newRequest.RequestId;
+
+                // إنشاء مستوى الطلب
+                RequestLevel requestLevel = new RequestLevel();
+                requestLevel.RequestId = requestId;
+                requestLevel.AssignedDate = DateTime.Now;
+                requestLevel.RequestDetailsStatusId = 5; // حالة جديدة
+                requestLevel.ApplicationLevelId = applicationLevelId;
+                requestLevel.InUse = false;
+                
+                db.RequestLevels.Add(requestLevel);
+                db.SaveChanges();
+
+                // معالجة بيانات النموذج
                 foreach (var key in form.Keys)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Key: {key}, Value: {form[key]}");
+                    if (key.StartsWith("Application_Requirement_"))
+                    {
+                        var requirementId = key.Replace("Application_Requirement_", "");
+                        var value = form[key].ToString();
+                        
+                        if (!string.IsNullOrEmpty(value) && int.TryParse(requirementId, out int reqId))
+                        {
+                            RequestDetail detail = new RequestDetail();
+                            detail.RequestId = requestId;
+                            detail.RequestLevelId = requestLevel.RequestLevelId;
+                            detail.ApplicationRequirementId = reqId;
+                            detail.SValue = value;
+                            detail.SDate = DateTime.Now;
+                            
+                            db.RequestDetails.Add(detail);
+                        }
+                    }
                 }
+                
+            db.SaveChanges();
+                
+                return Json(new { success = true, message = "تم إرسال الطلب بنجاح", requestId = requestId });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "حدث خطأ أثناء إرسال الطلب: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RequestPost(IFormCollection form)
+        {
+            try
+            {
+                // Debug: Log form data
+                System.Diagnostics.Debug.WriteLine("Form keys: " + string.Join(", ", form.Keys));
+                System.Diagnostics.Debug.WriteLine("ApplicationId: " + form["ApplicationId"]);
                 
                 // الحصول على معلومات المستخدم الحالي
                 int currentUserId = GetCurrentUserId();
+                string currentUserName = GetCurrentUserName();
+                string currentUserFullName = GetCurrentUserFullName();
+
                 if (currentUserId == 0)
                 {
                     return Json(new { success = false, message = "يجب تسجيل الدخول أولاً" });
                 }
 
                 // الحصول على ApplicationId من النموذج
-                int applicationId;
-                if (!int.TryParse(form["ApplicationId"], out applicationId))
+                if (!int.TryParse(form["ApplicationId"], out int applicationId))
                 {
                     return Json(new { success = false, message = "معرف التطبيق غير صحيح" });
                 }
@@ -165,33 +271,21 @@ namespace WorkFlow.Controllers
                 // معالجة بيانات النموذج
                 foreach (var key in form.Keys)
                 {
-                    var value = form[key].ToString();
-                    
-                    // تجاهل الحقول الفارغة أو غير المطلوبة
-                    if (string.IsNullOrEmpty(value) || 
-                        key == "ApplicationId" || 
-                        key == "ApplicationLevelId" || 
-                        key == "__RequestVerificationToken")
-                        continue;
-                    
-                    // معالجة البيانات المرسلة من النموذج
-                    if (key.Contains(".S_Value") || key.Contains(".S_Date") || key.Contains(".S_Shared_Table_Id_Value") || key.Contains(".Application_Req_Details_Id"))
+                    if (key.StartsWith("Application_Requirement_"))
                     {
-                        // استخراج معرف المتطلب من اسم الحقل
-                        if (key.Contains("[") && key.Contains("]"))
+                        var requirementId = key.Replace("Application_Requirement_", "");
+                        var value = form[key].ToString();
+                        
+                        if (!string.IsNullOrEmpty(value) && int.TryParse(requirementId, out int reqId))
                         {
-                            var requirementIdStr = key.Split('[')[1].Split(']')[0];
-                            if (int.TryParse(requirementIdStr, out int reqId))
-                            {
-                                RequestDetail detail = new RequestDetail();
-                                detail.RequestId = requestId;
-                                detail.RequestLevelId = requestLevel.RequestLevelId;
-                                detail.ApplicationRequirementId = reqId;
-                                detail.SValue = value;
-                                detail.SDate = DateTime.Now;
-                                
-                                db.RequestDetails.Add(detail);
-                            }
+                            RequestDetail detail = new RequestDetail();
+                            detail.RequestId = requestId;
+                            detail.RequestLevelId = requestLevel.RequestLevelId;
+                            detail.ApplicationRequirementId = reqId;
+                            detail.SValue = value;
+                            detail.SDate = DateTime.Now;
+                            
+                            db.RequestDetails.Add(detail);
                         }
                     }
                 }
@@ -205,8 +299,6 @@ namespace WorkFlow.Controllers
                 return Json(new { success = false, message = "حدث خطأ أثناء إرسال الطلب: " + ex.Message });
             }
         }
-
-
 
 
 
