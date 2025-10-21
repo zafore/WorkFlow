@@ -141,12 +141,12 @@ namespace WorkFlow.Controllers
                 //    .Where(x => x.ApplicationId == applicationId && x.ApplicationLevelInUse == true && x.TemplateId == "start")
                 //    .FirstOrDefault();
                 
-                if (firstLevel == null)
-                {
-                    return Json(new { success = false, message = "لم يتم العثور على المستوى الأول للتطبيق" });
-                }
+                //if (firstLevel == null)
+                //{
+                //    return Json(new { success = false, message = "لم يتم العثور على المستوى الأول للتطبيق" });
+                //}
 
-                int applicationLevelId = firstLevel.ApplicationLevelId;
+                //int applicationLevelId = firstLevel.ApplicationLevelId;
 
                 // إنشاء طلب جديد
                 Request newRequest = new Request();
