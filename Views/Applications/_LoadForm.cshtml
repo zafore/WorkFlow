@@ -69,13 +69,13 @@
                             {
                                 if (Req.Tools != null)
                                 {
-                                    <select name="[@i].NewDrop" id="[@i].NewDrop" class="@ClassV Ssearch" required="@Req.IsRequired">
+                              @*       <select name="[@i].NewDrop" id="[@i].NewDrop" class="@ClassV Ssearch" required="@Req.IsRequired">
                                         <option value="">None</option>
                                         @if (Req.ApplicationRequirementDetail != null)
                                         {
                                             <option value="@Req.ApplicationRequirementDetail.ApplicationRequirementId">@Req.ApplicationRequirementDetail.RequirementName</option>
                                         }
-                                    </select>
+                                    </select> *@
 
 
 
@@ -105,10 +105,10 @@
                             {///CheckBox New
                                 if (Req.ApplicationRequirementDetail != null)
                                 {
-                                    <label class="checkbox-inline">
+                                  @*   <label class="checkbox-inline">
                                         <input class="@ClassV" type="checkbox" name="[@i].Application_Req_Details_Id" id="Req.Application_Requirement_Id" value="@Req.ApplicationRequirementDetail.ApplicationRequirementId">
                                         @Req.ApplicationRequirementDetail.RequirementName
-                                    </label>
+                                    </label> *@
                                 }
                             }
 
@@ -134,7 +134,7 @@
                             {
 
                                 <div id="@Req.Application_Requirement_Id"></div>
-                                <script>
+                     @*            <script>
 
                                     var Functionname = '@Req.DisplayLink.DisplayFunction';
                                     var Emp = '@Req.Employe.UserId';
@@ -142,7 +142,7 @@
 
                                     // Call function:
                                     window[Functionname](Emp, DivId);
-                                </script>
+                                </script> *@
                             }
                             @if (Req.ToolsId == 12)
                             {

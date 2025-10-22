@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Authorization;
 namespace WorkFlow.Controllers
 {
     [Authorize]
-    public class Requests : Controller
+    public class RequestsController : Controller
     {
         private readonly Workflow2Context db;
      
-        public Requests(Workflow2Context context)
+        public RequestsController(Workflow2Context context)
         {
             db = context;
         }
@@ -82,11 +82,11 @@ namespace WorkFlow.Controllers
                 InStart = x.InStart,
                 SharedTableId = x.SharedTableId,
                 SharedTable = x.SharedTable,
-                ApplicationProcuderDetails = x.ApplicationProcuderDetails,
-                ApplicationRequirementDetail = x.ApplicationRequirementDetails,
+                ApplicationProcuderDetails = null,
+                ApplicationRequirementDetail = null,
                 ArchivesMasterId = x.ArchivesMasterId,
                 ArchivesMasters = x.ArchivesMaster,
-                DisplayLink = x.Displaylink,
+                DisplayLink = null,
                 //Employe
                 //RequestDetailsAttachs = x.RequestDetailsAttaches.ToList()
 
@@ -95,12 +95,31 @@ namespace WorkFlow.Controllers
             ViewBag.ApplicationLevelId = FirstLevel.ApplicationLevelId;
             return PartialView(model);
         }
-
+        public class RequestPostModel
+        {
+            // Use the exact names (case-insensitive) as your form inputs
+            public int? ApplicationId { get; set; }
+            public int? ApplicationLevelId { get; set; }
+            public int? AssignedFromEmpId { get; set; }
+            public int? AssignedToEmp_Id { get; set; }
+            // Ensure this matches the form element's 'name' attribute
+        }
+        [HttpPost]
+        public ActionResult RequestPOstTest([FromForm] RequestPostModel RequestPostModel)
+        {
+            return Ok();
+        }
 
 
         [HttpPost]
         public ActionResult RequestPOst(List<FormPost> collection, int ApplicationId ,int ApplicationLevelId, int? AssignedFromEmpId, int? AssignedToEmp_Id)
         {
+            try
+            {
+                // Debug: Log form data
+                //System.Diagnostics.Debug.WriteLine("Form keys: " + string.Join(", ", form.Keys));
+                //System.Diagnostics.Debug.WriteLine("ApplicationId: " + form["ApplicationId"]);
+                
             // الحصول على معلومات المستخدم الحالي
             int currentUserId = GetCurrentUserId();
             string currentUserName = GetCurrentUserName();
@@ -108,164 +127,177 @@ namespace WorkFlow.Controllers
 
             if (currentUserId == 0)
             {
-                return RedirectToAction("Login", "Account");
-            }
+                    return Json(new { success = false, message = "يجب تسجيل الدخول أولاً" });
+                }
 
-            // Note: These variables need to be properly defined based on your authentication system
-            int EmployeId = currentUserId; // استخدام معرف المستخدم الحالي
-            int Application_Id = ApplicationId;
-            int? Assigned_To_Emp_Id = AssignedToEmp_Id;
-            var modelData = db.Applications.Where(x => x.ApplicationInUse == true && x.ApplicationId == ApplicationId);
-            Request model = new Models.Request();
-            model.ApplicationId = ApplicationId;
-            model.IsComplate = false;
-            model.IsEnd = false;
-            model.RequestDate = System.DateTime.Now;
-            model.RequestStatusId = 2;
-            model.AssignedFromEmpId = AssignedFromEmpId;
-            model.CrUserId = currentUserId; // استخدام معرف المستخدم الحالي
-            db.Requests.Add(model);
-            db.SaveChanges();
+                // الحصول على ApplicationId من النموذج
+                //if (!int.TryParse(form["ApplicationId"], out int applicationId))
+                //{
+                //    return Json(new { success = false, message = "معرف التطبيق غير صحيح" });
+                //}
+                
+                // الحصول على المستوى الأول للتطبيق
+                //var firstLevel = db.ApplicationLevels
+                //    .Where(x => x.ApplicationId == applicationId && x.ApplicationLevelInUse == true && x.TemplateId == "start")
+                //    .FirstOrDefault();
+                
+                //if (firstLevel == null)
+                //{
+                //    return Json(new { success = false, message = "لم يتم العثور على المستوى الأول للتطبيق" });
+                //}
 
-            int RequestID = model.RequestId;
-            int Application_Requirement_Id;
-            int applicationLevel;
-  
+                //int applicationLevelId = firstLevel.ApplicationLevelId;
 
+                // إنشاء طلب جديد
+                //Request newRequest = new Request();
+                //newRequest.ApplicationId = applicationId;
+                //newRequest.IsComplate = false;
+                //newRequest.IsEnd = false;
+                //newRequest.RequestDate = DateTime.Now;
+                //newRequest.RequestStatusId = 2; // حالة جديدة
+                //newRequest.AssignedFromEmpId = currentUserId;
+                
+               // db.Requests.Add(newRequest);
+            //db.SaveChanges();
 
- 
-            RequestLevel AddRequestLevel = new RequestLevel();
-            AddRequestLevel.RequestId = RequestID;
-            AddRequestLevel.AssignedDate = System.DateTime.Now;
-            AddRequestLevel.RequestDetailsStatusId = 5;
-            AddRequestLevel.ApplicationLevelId = ApplicationLevelId;
-            AddRequestLevel.InUse = false;
-            db.RequestLevels.Add(AddRequestLevel);
-            db.SaveChanges();
-            // Note: These database operations need to be implemented using proper Entity Framework models
-            // The following code uses old database patterns that don't exist in the current EF context
-            try
-            {
-                // TODO: Implement proper workflow level management using Entity Framework
-                // var NextLevel = db.Fu_Next_Level(Application_Id, 0).First();
-                // RequestLevel AddNextLevel = new RequestLevel();
-                // AddNextLevel.RequestId = RequestID;
-                // AddNextLevel.AssignedDate = System.DateTime.Now.AddHours(9);
-                // AddNextLevel.AssignedToEmpId = Assigned_To_Emp_Id;
-                // AddNextLevel.RequestDetailsStatusId = 8;
-                // AddNextLevel.ApplicationLevelId = NextLevel.ApplicationLevelId;
-                // AddNextLevel.InUse = true;
-                // db.RequestLevels.Add(AddNextLevel);
-                // db.SaveChanges();
-                // var AssignToList = db.Pr_Add_Level_Assign(AddNextLevel.ApplicationLevelId, EmployeId, AddNextLevel.RequestLevelId).ToList();
+            //    int requestId = newRequest.RequestId;
+
+            //    // إنشاء مستوى الطلب
+            //    RequestLevel requestLevel = new RequestLevel();
+            //    requestLevel.RequestId = requestId;
+            //    requestLevel.AssignedDate = DateTime.Now;
+            //    requestLevel.RequestDetailsStatusId = 5; // حالة جديدة
+            //    requestLevel.ApplicationLevelId = applicationLevelId;
+            //    requestLevel.InUse = false;
+                
+            //    db.RequestLevels.Add(requestLevel);
+            //    db.SaveChanges();
+
+            //    // معالجة بيانات النموذج
+            //    foreach (var key in form.Keys)
+            //    {
+            //        if (key.StartsWith("Application_Requirement_"))
+            //        {
+            //            var requirementId = key.Replace("Application_Requirement_", "");
+            //            var value = form[key].ToString();
+                        
+            //            if (!string.IsNullOrEmpty(value) && int.TryParse(requirementId, out int reqId))
+            //            {
+            //                RequestDetail detail = new RequestDetail();
+            //                detail.RequestId = requestId;
+            //                detail.RequestLevelId = requestLevel.RequestLevelId;
+            //                detail.ApplicationRequirementId = reqId;
+            //                detail.SValue = value;
+            //                detail.SDate = DateTime.Now;
+                            
+            //                db.RequestDetails.Add(detail);
+            //            }
+            //        }
+            //    }
+                
+            //db.SaveChanges();
+                //dsdfggdfg
+                return Json(new { success = true, message = "تم إرسال الطلب بنجاح" });
             }
             catch (Exception ex)
             {
-                // Log the error and continue with basic request creation
-                // TODO: Add proper logging
+                return Json(new { success = false, message = "حدث خطأ أثناء إرسال الطلب: " + ex.Message });
             }
+        }
 
-
-
-            // Note: These database operations need to be implemented using proper Entity Framework models
-            // TODO: Implement notification system and proper level management
-            // var LevelName = db.ApplicationLevels.Where(x => x.ApplicationLevelId == NextLevel.ApplicationLevelId).FirstOrDefault();
-            // var EmpInfo = db.Employees.Where(x => x.EmployeeId == EmployeId).First();
-            // var RequesterName = EmpInfo.EmployeeName + " - " + model.RequestId;
-            // var body = "New Request waiting for you from " + RequesterName + " Request for " + LevelName.Application.ApplicationNameEng;
-            // var subject = "New Request waiting for you from " + RequesterName;
-            // foreach (var item in AssignToList)
-            // {
-            //     AddWorkFlowNotification(subject, body, EmployeId, item.AssignedToEmpId.Value);
-            // }
-
-            // body = "Your Request No. " + model.RequestId + " Request for " + LevelName.Application.ApplicationNameEng + " is Pending ";
-            // subject = "Your Request No. " + model.RequestId + " Request for " + LevelName.Application.ApplicationNameEng + " is Pending ";
-            // AddWorkFlowNotification(subject, body, null, EmployeId);
-            int RequestLevelId = AddRequestLevel.RequestLevelId;
-            // var Requestmodel = (from e in db.RequestLevels where e.RequestLevelId == RequestLevelId select e).First();
-            // int ApplicationLevelIndex = Requestmodel.ApplicationLevel.ApplicationLevelIndex;
-            foreach (var x in collection)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RequestPost(IFormCollection form)
+        {
+            try
             {
-                Application_Requirement_Id = int.Parse(x.Application_Requirement_Id);
-                int? Application_Req_Details_Id = null;
-                int? S_Shared_Table_Id_Value = null;
-                int? sharedTableId = null;
-                int? NewDrop = null;
-                if (x.S_Shared_Table_Id_Value != null)
+                // Debug: Log form data
+                System.Diagnostics.Debug.WriteLine("Form keys: " + string.Join(", ", form.Keys));
+                System.Diagnostics.Debug.WriteLine("ApplicationId: " + form["ApplicationId"]);
+                
+                // الحصول على معلومات المستخدم الحالي
+                int currentUserId = GetCurrentUserId();
+                string currentUserName = GetCurrentUserName();
+                string currentUserFullName = GetCurrentUserFullName();
+
+                if (currentUserId == 0)
                 {
-                    S_Shared_Table_Id_Value = x.S_Shared_Table_Id_Value;
-                    // Note: This needs to be implemented using proper Entity Framework models
-                    // sharedTableId = db.ApplicationRequirements.Where(m => m.ApplicationRequirementId == Application_Requirement_Id).First().SharedTableId;
+                    return Json(new { success = false, message = "يجب تسجيل الدخول أولاً" });
                 }
 
-                DateTime? S_Date = null;
-                if (x.S_Date != null)
-                    S_Date = DateTime.Parse(x.S_Date);
-                if (x.NewDrop != null)
-                    NewDrop = int.Parse(x.NewDrop);
-
-                // Note: This method needs to be implemented using proper Entity Framework models
-                // var Request_Details = db.Pr_Add_Request_Details(Application_Requirement_Id, RequestID, NewDrop, sharedTableId, x.S_Shared_Table_Id_Value.ToString(), x.S_Value, S_Date, RequestLevelId).First();
-
-                if (x.Application_Req_Details_Id != null)
+                // الحصول على ApplicationId من النموذج
+                if (!int.TryParse(form["ApplicationId"], out int applicationId))
                 {
-                    foreach (var Details in x.Application_Req_Details_Id.Select((value, index) => new { value, index }))
+                    return Json(new { success = false, message = "معرف التطبيق غير صحيح" });
+                }
+
+                // الحصول على المستوى الأول للتطبيق
+                var firstLevel = db.ApplicationLevels
+                    .Where(x => x.ApplicationId == applicationId && x.ApplicationLevelInUse == true && x.TemplateId == "start")
+                    .FirstOrDefault();
+                
+                if (firstLevel == null)
+                {
+                    return Json(new { success = false, message = "لم يتم العثور على المستوى الأول للتطبيق" });
+                }
+
+                int applicationLevelId = firstLevel.ApplicationLevelId;
+
+                // إنشاء طلب جديد
+                Request newRequest = new Request();
+                newRequest.ApplicationId = applicationId;
+                newRequest.IsComplate = false;
+                newRequest.IsEnd = false;
+                newRequest.RequestDate = DateTime.Now;
+                newRequest.RequestStatusId = 2; // حالة جديدة
+                newRequest.AssignedFromEmpId = currentUserId;
+                
+                db.Requests.Add(newRequest);
+                db.SaveChanges();
+
+                int requestId = newRequest.RequestId;
+
+                // إنشاء مستوى الطلب
+                RequestLevel requestLevel = new RequestLevel();
+                requestLevel.RequestId = requestId;
+                requestLevel.AssignedDate = DateTime.Now;
+                requestLevel.RequestDetailsStatusId = 5; // حالة جديدة
+                requestLevel.ApplicationLevelId = applicationLevelId;
+                requestLevel.InUse = false;
+                
+                db.RequestLevels.Add(requestLevel);
+                db.SaveChanges();
+
+                // معالجة بيانات النموذج
+                foreach (var key in form.Keys)
+                {
+                    if (key.StartsWith("Application_Requirement_"))
                     {
-                        // Note: These database operations need to be implemented using proper Entity Framework models
-                        // Check_List_Details CkD = new Check_List_Details();
-                        // CkD.Application_Requirement_Id = Application_Requirement_Id;
-                        // CkD.Check_List_Value = int.Parse(Details.value);
-                        // CkD.Request_ID = RequestID;
-                        // db.Check_List_Details.Add(CkD);
-                        // db.SaveChanges();
+                        var requirementId = key.Replace("Application_Requirement_", "");
+                        var value = form[key].ToString();
+                        
+                        if (!string.IsNullOrEmpty(value) && int.TryParse(requirementId, out int reqId))
+                        {
+                            RequestDetail detail = new RequestDetail();
+                            detail.RequestId = requestId;
+                            detail.RequestLevelId = requestLevel.RequestLevelId;
+                            detail.ApplicationRequirementId = reqId;
+                            detail.SValue = value;
+                            detail.SDate = DateTime.Now;
+                            
+                            //db.RequestDetails.Add(detail);
+                        }
                     }
-
-
                 }
-                //if (x.files != null)
-                //{
-                //    foreach (var file in x.files)
-                //    {
-                //        if (file != null)
-                //        {
-                //            if (file.ContentLength > 0)
-                //            {
-                //                // Note: File handling needs to be implemented using proper Entity Framework models
-                //                // var fileName = Path.GetFileName(file.FileName);
-                //                // string time = DateTime.Now.Day.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString() + DateTime.Now.Millisecond.ToString();
-
-                //                // FileInfo fileInfo = new FileInfo(file.FileName);
-                //                // var FileName = time + fileInfo;
-
-                //                // var path = Path.Combine(Server.MapPath("~/Files/Request"), FileName);
-                //                // file.SaveAs(path);
-                //                // db.Pr_Add_Request_Details_Attach(Request_Details.Request_Details_Id, RequestID, Application_Requirement_Id, FileName, file.FileName, System.DateTime.Now, EmployeId, RequestLevelId);
-                //            }
-                //        }
-                //    }
-                //}
-
+                
+                db.SaveChanges();
+                
+                return Json(new { success = true, message = "تم إرسال الطلب بنجاح", requestId = requestId });
             }
-
-
-
-
-
-
-
-
-
-            //    db.Pr_Request_Level_Process(Application_Id, RequestID, 0, applicationLevel, 5, Request_Level_Id, EmployeId);
-
-            return RedirectToAction("My_Request");
-
-
-
-
-
-
-
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "حدث خطأ أثناء إرسال الطلب: " + ex.Message });
+            }
         }
 
 

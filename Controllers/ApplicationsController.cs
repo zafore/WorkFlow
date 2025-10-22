@@ -177,11 +177,11 @@ namespace WorkFlow.Controllers
                 InStart = x.InStart,
                 SharedTableId = x.SharedTableId,
                 SharedTable = x.SharedTable,
-                ApplicationProcuderDetails = x.ApplicationProcuderDetails,
-                ApplicationRequirementDetail = x.ApplicationRequirementDetails,
-                ArchivesMasterId = x.ArchivesMasterId,
-                ArchivesMasters = x.ArchivesMaster,
-                DisplayLink = x.Displaylink,
+                //ApplicationProcuderDetails = x.ApplicationProcuderDetails,
+                //ApplicationRequirementDetail = x.ApplicationRequirementDetails,
+                //ArchivesMasterId = x.ArchivesMasterId,
+                //ArchivesMasters = x.ArchivesMaster,
+                //DisplayLink = x.Displaylink,
                 //Employe
                 //RequestDetailsAttachs = x.RequestDetailsAttaches.ToList()
 
@@ -272,7 +272,7 @@ namespace WorkFlow.Controllers
             Model.ApplicationNameEng = Application.ApplicationNameEng;
             Model.ApplicationInUse = true;
             Model.CrDate = DateTime.Now;
-            Model.CrEmpId = 12;
+            //Model.CrEmpId = 12;
             Model.DepartmentId = Application.DepartmentId;
             Model.SectionId = (Application.SectionId == null ? Application.SectionId : null);
             Model.SystemInfoId = Application.SystemInfoId;
