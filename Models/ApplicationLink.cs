@@ -7,14 +7,6 @@ public partial class ApplicationLink
 {
     public int ApplictionLinkId { get; set; }
 
-    public string LinkName { get; set; } = null!;
-
-    public string LinkNameAr { get; set; } = null!;
-
-    public string LinkNameEng { get; set; } = null!;
-
-    public string DisplayFunction { get; set; } = null!;
-
     public int FromTapplicationLevelId { get; set; }
 
     public int ToApplicationLevelId { get; set; }

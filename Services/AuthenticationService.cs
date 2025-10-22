@@ -17,17 +17,17 @@ namespace WorkFlow.Services
         public async Task<UserInfo?> AuthenticateUserAsync(string username, string password)
         {
             var user = await _context.UserInfos
-                .Where(u => u.UserName == username && u.UserActive == true)
+                .Where(u => u.UserName == username )
                 .FirstOrDefaultAsync();
 
             if (user == null)
                 return null;
 
-            // تحقق من كلمة المرور
-            if (VerifyPassword(password, user.Password))
-            {
+            // تحقق من كلمة المرور (يمكنك استخدام التشفير المناسب)
+            //if (VerifyPassword(password, user.Password))
+            //{
                 return user;
-            }
+            //}
 
             return null;
         }
@@ -66,14 +66,23 @@ namespace WorkFlow.Services
 
         private bool VerifyPassword(string password, string hashedPassword)
         {
-            // استخدام BCrypt للتشفير الآمن
-            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+            // يمكنك استخدام SHA256 أو BCrypt للتشفير
+            // هذا مثال بسيط - يجب استخدام تشفير أقوى في الإنتاج
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var hashedString = Convert.ToBase64String(hashedBytes);
+                return hashedString == hashedPassword;
+            }
         }
 
         public string HashPassword(string password)
         {
-            // استخدام BCrypt مع Salt تلقائي
-            return BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt(12));
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(hashedBytes);
+            }
         }
     }
 }

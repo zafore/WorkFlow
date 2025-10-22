@@ -7,12 +7,6 @@ public partial class Request
 {
     public int RequestId { get; set; }
 
-    public string RequestTitle { get; set; } = null!;
-
-    public string RequestDescription { get; set; } = null!;
-
-    public int CrUserId { get; set; }
-
     public int? ApplicationId { get; set; }
 
     public int? AssignedFromEmpId { get; set; }

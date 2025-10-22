@@ -7,12 +7,6 @@ public partial class ApplicationRequirement
 {
     public int ApplicationRequirementId { get; set; }
 
-    public string RequirementName { get; set; } = null!;
-
-    public string RequirementNameAr { get; set; } = null!;
-
-    public string RequirementNameEng { get; set; } = null!;
-
     public int ApplicationLevelId { get; set; }
 
     public int? ApplicationId { get; set; }
