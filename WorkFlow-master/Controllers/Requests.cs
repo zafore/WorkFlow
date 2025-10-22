@@ -117,8 +117,8 @@ namespace WorkFlow.Controllers
             try
             {
                 // Debug: Log form data
-                System.Diagnostics.Debug.WriteLine("Form keys: " + string.Join(", ", form.Keys));
-                System.Diagnostics.Debug.WriteLine("ApplicationId: " + form["ApplicationId"]);
+                //System.Diagnostics.Debug.WriteLine("Form keys: " + string.Join(", ", form.Keys));
+                //System.Diagnostics.Debug.WriteLine("ApplicationId: " + form["ApplicationId"]);
                 
             // الحصول على معلومات المستخدم الحالي
             int currentUserId = GetCurrentUserId();
@@ -157,47 +157,47 @@ namespace WorkFlow.Controllers
                 //newRequest.RequestStatusId = 2; // حالة جديدة
                 //newRequest.AssignedFromEmpId = currentUserId;
                 
-                db.Requests.Add(newRequest);
-            db.SaveChanges();
+               // db.Requests.Add(newRequest);
+            //db.SaveChanges();
 
-                int requestId = newRequest.RequestId;
+            //    int requestId = newRequest.RequestId;
 
-                // إنشاء مستوى الطلب
-                RequestLevel requestLevel = new RequestLevel();
-                requestLevel.RequestId = requestId;
-                requestLevel.AssignedDate = DateTime.Now;
-                requestLevel.RequestDetailsStatusId = 5; // حالة جديدة
-                requestLevel.ApplicationLevelId = applicationLevelId;
-                requestLevel.InUse = false;
+            //    // إنشاء مستوى الطلب
+            //    RequestLevel requestLevel = new RequestLevel();
+            //    requestLevel.RequestId = requestId;
+            //    requestLevel.AssignedDate = DateTime.Now;
+            //    requestLevel.RequestDetailsStatusId = 5; // حالة جديدة
+            //    requestLevel.ApplicationLevelId = applicationLevelId;
+            //    requestLevel.InUse = false;
                 
-                db.RequestLevels.Add(requestLevel);
-                db.SaveChanges();
+            //    db.RequestLevels.Add(requestLevel);
+            //    db.SaveChanges();
 
-                // معالجة بيانات النموذج
-                foreach (var key in form.Keys)
-                {
-                    if (key.StartsWith("Application_Requirement_"))
-                    {
-                        var requirementId = key.Replace("Application_Requirement_", "");
-                        var value = form[key].ToString();
+            //    // معالجة بيانات النموذج
+            //    foreach (var key in form.Keys)
+            //    {
+            //        if (key.StartsWith("Application_Requirement_"))
+            //        {
+            //            var requirementId = key.Replace("Application_Requirement_", "");
+            //            var value = form[key].ToString();
                         
-                        if (!string.IsNullOrEmpty(value) && int.TryParse(requirementId, out int reqId))
-                        {
-                            RequestDetail detail = new RequestDetail();
-                            detail.RequestId = requestId;
-                            detail.RequestLevelId = requestLevel.RequestLevelId;
-                            detail.ApplicationRequirementId = reqId;
-                            detail.SValue = value;
-                            detail.SDate = DateTime.Now;
+            //            if (!string.IsNullOrEmpty(value) && int.TryParse(requirementId, out int reqId))
+            //            {
+            //                RequestDetail detail = new RequestDetail();
+            //                detail.RequestId = requestId;
+            //                detail.RequestLevelId = requestLevel.RequestLevelId;
+            //                detail.ApplicationRequirementId = reqId;
+            //                detail.SValue = value;
+            //                detail.SDate = DateTime.Now;
                             
-                            db.RequestDetails.Add(detail);
-                        }
-                    }
-                }
+            //                db.RequestDetails.Add(detail);
+            //            }
+            //        }
+            //    }
                 
-            db.SaveChanges();
+            //db.SaveChanges();
                 
-                return Json(new { success = true, message = "تم إرسال الطلب بنجاح", requestId = requestId });
+                return Json(new { success = true, message = "تم إرسال الطلب بنجاح" });
             }
             catch (Exception ex)
             {
